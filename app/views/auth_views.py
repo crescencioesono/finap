@@ -1,44 +1,35 @@
-from flask import Blueprint, request, jsonify
-from app.services import AuthService
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_required,
-    get_jwt_identity
-)
+from flask import Blueprint, flash, request, render_template, redirect, url_for, make_response
+from app.services.auth_service import AuthService
+from flask_jwt_extended import jwt_required, unset_jwt_cookies
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    try:
-        user = AuthService.register_user(
-            username=data.get('username'),
-            password=data.get('password'),
-            role_id=data.get('role_id')
-        )
-        return jsonify({'message': 'Usuario registrado exitosamente', 'user': user.to_dict()}), 201
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/', methods=['GET', 'POST'])
 def login():
-    data = request.get_json()
-    try:
-        response = AuthService.login_user(
-            username=data.get('username'),
-            password=data.get('password')
-        )
-        return jsonify(response), 200
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 401
+    if request.method == 'GET':
+        return render_template('login.html')
+    
+    data = request.form
+    return AuthService.login_user(
+        username=data.get('username'),
+        password=data.get('password')
+    )
+
+@auth_bp.route('/dashboard')
+@jwt_required()
+def dashboard():
+    current_user = AuthService.get_current_user()
+    return render_template('dashboard.html', current_user=current_user)
+
+@auth_bp.route('/logout', methods=['GET'])
+@jwt_required()
+def logout():
+    response = make_response(redirect(url_for('auth.login')))
+    unset_jwt_cookies(response)
+    flash('Has cerrado sesión exitosamente', 'success')
+    return response
 
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    try:
-        response = AuthService.refresh_token()
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    return AuthService.refresh_token()

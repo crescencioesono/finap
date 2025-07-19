@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services import TrainingHistoryService
+from app.services.training_history_service import TrainingHistoryService
 from flask_jwt_extended import jwt_required
 
 training_history_bp = Blueprint('training_history', __name__)

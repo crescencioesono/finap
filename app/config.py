@@ -18,6 +18,8 @@ class Config:
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = os.getenv("DB_PORT", "3306")
     DB_NAME = os.getenv("DB_NAME", "fnapdb")
+    DEFAULT_USERNAME = os.getenv("DEFAULT_USERNAME")
+    DEFAULT_PASSWORD = os.getenv("DEFAULT_PASSWORD")
 
     # Cadena de conexión para SQLAlchemy
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"

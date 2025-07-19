@@ -1,0 +1,213 @@
+body {
+    background-color: #F7F7F7; /* Blanco suave para el fondo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+.container {
+    background-color: #FFFFFF; /* Blanco puro para el contenedor */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+h1 {
+    color: #1F2937; /* Gris oscuro para el título */
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.message {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.message.error {
+    color: #DC2626; /* Rojo para errores */
+}
+.message.success {
+    color: #16A34A; /* Verde para éxito */
+}
+.form-group {
+    margin-bottom: 1.5rem;
+}
+label {
+    display: block;
+    color: #374151; /* Gris oscuro para etiquetas */
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #4B9CEA; /* Azul claro para bordes */
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #2563EB; /* Azul más oscuro al enfocar */
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563EB; /* Azul para el botón */
+    color: #FFFFFF; /* Blanco para el texto del botón */
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+button:hover {
+    background-color: #1D4ED8; /* Azul más oscuro al pasar el ratón */
+}
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+
+/* Estilos para dashboard */
+
+/* New styles for dashboard.html */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    background-color: #FFFFFF; /* Blanco puro */
+    width: 250px;
+    padding: 1rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+.app-branding {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.app-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+}
+.app-name {
+    font-size: 1.25rem;
+    color: #1F2937; /* Gris oscuro */
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.menu-item {
+    margin-bottom: 0.5rem;
+}
+.menu-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4B9CEA; /* Azul claro */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+.menu-button:hover {
+    background-color: #2563EB; /* Azul más oscuro */
+}
+.submenu {
+    display: none;
+    list-style: none;
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+}
+.submenu.active {
+    display: block;
+}
+.submenu li a {
+    display: block;
+    padding: 0.5rem;
+    color: #1D4ED8; /* Azul para enlaces */
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.submenu li a:hover {
+    color: #2563EB; /* Azul más claro */
+    background-color: #F7F7F7; /* Blanco suave */
+    border-radius: 4px;
+}
+.logout {
+    margin-top: 2rem;
+}
+.logout-link {
+    display: block;
+    padding: 0.75rem;
+    background-color: #DC2626; /* Rojo para logout */
+    color: #FFFFFF;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+.logout-link:hover {
+    background-color: #B91C1C; /* Rojo más oscuro */
+}
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    background-color: #F7F7F7; /* Blanco suave */
+}
+.header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+.user-profile {
+    position: relative;
+    cursor: pointer;
+}
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #4B9CEA; /* Azul claro */
+}
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #FFFFFF;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 10;
+}
+.user-profile:hover .user-dropdown {
+    display: block;
+}
+.user-dropdown p {
+    margin: 0.5rem 0;
+    color: #1F2937; /* Gris oscuro */
+    font-size: 0.9rem;
+}
+.content h2 {
+    color: #1F2937; /* Gris oscuro */
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+.content p {
+    color: #374151; /* Gris oscuro */
+}

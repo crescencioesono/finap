@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services import OfficialService
+from app.services.official_service import OfficialService
 from flask_jwt_extended import jwt_required
 
 official_bp = Blueprint('official', __name__)

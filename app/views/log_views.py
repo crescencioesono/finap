@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services import LogService
+from app.services.log_service import LogService
 from flask_jwt_extended import jwt_required
 
 log_bp = Blueprint('log', __name__)

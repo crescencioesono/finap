@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services import UserService
+from app.services.user_service import UserService
 from flask_jwt_extended import jwt_required
 
 user_bp = Blueprint('user', __name__)

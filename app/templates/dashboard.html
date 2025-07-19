@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="app-branding">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="App Logo" class="app-logo">
+                <h1 class="app-name">Mi App</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="menu-item">
+                        <button class="menu-button">Funcionarios</button>
+                        <ul class="submenu">
+                            <li><a href="{{ url_for('official.get_officials') }}">Ver Funcionarios</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item">
+                        <button class="menu-button">Cursos</button>
+                        <ul class="submenu">
+                            <li><a href="{{ url_for('training.get_trainings') }}">Ver Cursos</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item">
+                        <button class="menu-button">Usuarios</button>
+                        <ul class="submenu">
+                            <li><a href="{{ url_for('user.get_users') }}">Ver Usuarios</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="logout">
+                    <a href="{{ url_for('auth.logout') }}" class="logout-link">Cerrar Sesión</a>
+                </div>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="user-profile">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user-placeholder.png') }}" alt="User Profile" class="user-icon">
+                    <div class="user-dropdown">
+                        <p>{{ current_user.username }}</p>
+                        <p>{{ current_user.email }}</p>
+                    </div>
+                </div>
+            </header>
+            <section class="content">
+                <h2>Bienvenido, {{ current_user.username }}!</h2>
+                <p>Este es el panel de control. Selecciona una opción del menú lateral para continuar.</p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
