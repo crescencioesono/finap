@@ -8,54 +8,39 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="app-branding">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="App Logo" class="app-logo">
-                <h1 class="app-name">Mi App</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="menu-item">
-                        <button class="menu-button">Funcionarios</button>
-                        <ul class="submenu">
-                            <li><a href="{{ url_for('official.get_officials') }}">Ver Funcionarios</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <button class="menu-button">Cursos</button>
-                        <ul class="submenu">
-                            <li><a href="{{ url_for('training.get_trainings') }}">Ver Cursos</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <button class="menu-button">Usuarios</button>
-                        <ul class="submenu">
-                            <li><a href="{{ url_for('user.get_users') }}">Ver Usuarios</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="logout">
-                    <a href="{{ url_for('auth.logout') }}" class="logout-link">Cerrar Sesión</a>
-                </div>
-            </nav>
-        </aside>
-        <!-- Main Content -->
+        <button class="hamburger" aria-label="Toggle Menu">☰</button>
         <main class="main-content">
             <header class="header">
                 <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user-placeholder.png') }}" alt="User Profile" class="user-icon">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
                     <div class="user-dropdown">
-                        <p>{{ current_user.username }}</p>
-                        <p>{{ current_user.email }}</p>
+                        <p class="user-name">{{ current_user.username }}</p>
+                        <p class="user-email">{{ current_user.email }}</p>
                     </div>
                 </div>
             </header>
             <section class="content">
                 <h2>Bienvenido, {{ current_user.username }}!</h2>
-                <p>Este es el panel de control. Selecciona una opción del menú lateral para continuar.</p>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Funcionarios</h3>
+                        <p>Administra el personal activo.</p>
+                        <a href="{{ url_for('official.get_officials') }}" class="card-link">Ver Detalles</a>
+                    </div>
+                    <div class="card">
+                        <h3>Cursos</h3>
+                        <p>Gestiona los cursos disponibles.</p>
+                        <a href="{{ url_for('training.get_trainings') }}" class="card-link">Ver Detalles</a>
+                    </div>
+                    <div class="card">
+                        <h3>Usuarios</h3>
+                        <p>Controla los usuarios del sistema.</p>
+                        <a href="{{ url_for('user.get_users') }}" class="card-link">Ver Detalles</a>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 </body>
 </html>

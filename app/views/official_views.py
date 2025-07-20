@@ -1,67 +1,66 @@
-from flask import Blueprint, request, jsonify
-from app.services.official_service import OfficialService
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+from app.services.training_service import TrainingService
+from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
 
-official_bp = Blueprint('official', __name__)
+training_bp = Blueprint('training', __name__)
 
-@official_bp.route('/', methods=['GET'])
+@training_bp.route('/', methods=['POST'])
 @jwt_required()
-def get_officials():
-    try:
-        officials = OfficialService.get_all_officials()
-        return jsonify([official.to_dict() for official in officials]), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+def create_training():
+    data = request.form
+    return TrainingService.create_training(
+        name=data.get('name'),
+    )
 
-@official_bp.route('/<int:official_id>', methods=['GET'])
+@training_bp.route('/new', methods=['GET', 'POST'])
+@jwt_required()  # El decorador manejará automáticamente la verificación CSRF
+def new_or_update_training():
+    training_id = request.args.get('id')
+    if request.method == 'POST':
+        data = request.form
+        training_id = data.get('training_id')
+        if training_id:
+            return TrainingService.update_training(
+                training_id=training_id,
+                name=data.get('name'),
+            )
+        else:
+            return TrainingService.create_training(
+                name=data.get('name'),
+            )
+    else:  # GET
+        training = None
+        if training_id:
+            try:
+                training = TrainingService.get_training_by_id(training_id)
+            except ValueError as e:
+                flash(str(e), 'error')
+                return redirect(url_for('training.get_trainings'))
+        current_user = AuthService.get_current_user()
+        return render_template('new_training.html', training=training, current_user=current_user, section=1)
+
+@training_bp.route('/<int:training_id>', methods=['GET'])
 @jwt_required()
-def get_official(official_id):
+def get_training(training_id):
     try:
-        official = OfficialService.get_official_by_id(official_id)
-        return jsonify(official.to_dict()), 200
+        training = TrainingService.get_training_by_id(training_id)
+        current_user = AuthService.get_current_user()
+        return render_template('training_detail.html', training=training, current_user=current_user)
     except ValueError as e:
-        return jsonify({'error': str(e)}), 404
+        flash(str(e), 'error')
+        return redirect(url_for('training.get_trainings'))
 
-@official_bp.route('/', methods=['POST'])
+@training_bp.route('/<int:training_id>', methods=['PUT'])
 @jwt_required()
-def create_official():
-    data = request.get_json()
-    try:
-        official = OfficialService.create_official(
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            date_of_birth=data.get('date_of_birth'),
-            workplace=data.get('workplace'),
-            level=data.get('level'),
-            image=data.get('image')
-        )
-        return jsonify(official.to_dict()), 201
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+def update_training(training_id):
+    data = request.form
+    return TrainingService.update_training(
+        training_id=training_id,
+        name=data.get('name'),
+    )
 
-@official_bp.route('/<int:official_id>', methods=['PUT'])
+@training_bp.route('/<int:training_id>', methods=['DELETE'])
 @jwt_required()
-def update_official(official_id):
-    data = request.get_json()
-    try:
-        official = OfficialService.update_official(
-            official_id=official_id,
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            date_of_birth=data.get('date_of_birth'),
-            workplace=data.get('workplace'),
-            level=data.get('level'),
-            image=data.get('image')
-        )
-        return jsonify(official.to_dict()), 200
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-
-@official_bp.route('/<int:official_id>', methods=['DELETE'])
-@jwt_required()
-def delete_official(official_id):
-    try:
-        OfficialService.delete_official(official_id)
-        return jsonify({'message': 'Oficial eliminado exitosamente'}), 200
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 404
+def delete_training(training_id):
+    return TrainingService.delete_training(training_id)

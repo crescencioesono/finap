@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Funcionarios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Debug: Check if CSS is loaded in browser Network tab -->
+</head>
+<body>
+    <div class="dashboard-container">
+        <button class="hamburger" aria-label="Toggle Menu">☰</button>
+        <main class="main-content">
+            <header class="header">
+                <div class="user-profile">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
+                    <div class="user-dropdown">
+                        <p class="user-name">{{ current_user.username }}</p>
+                        <p class="user-email">{{ current_user.email }}</p>
+                    </div>
+                </div>
+            </header>
+            <section class="content">
+                <h2>Lista de Funcionarios</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="table-controls">
+                    <a href="{{ url_for('official.new_or_update_official') }}" class="card-link">Agregar Nuevo</a>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
+                </div>
+                <table class="official-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Lugar de Trabajo</th>
+                            <th>Nivel</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="officialTableBody">
+                        {% for official in officials %}
+                            <tr>
+                                <td>{{ official.first_name }}</td>
+                                <td>{{ official.last_name }}</td>
+                                <td>{{ official.date_of_birth }}</td>
+                                <td>{{ official.workplace }}</td>
+                                <td>{{ official.level }}</td>
+                                <td>
+                                    <a href="{{ url_for('official.new_or_update_official', id=official.id) }}" class="action-link">Modificar</a>
+                                    <!--<form action="/official/{{ official.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="action-link">Eliminar</button>
+                                    </form>-->
+                                    <a href="/official/{{ official.id }}/assign-course" class="action-link">Asignar Nuevo Curso</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if pagination.pages > 1 %}
+                    <div class="pagination">
+                        {% if pagination.has_prev %}
+                            <a href="{{ url_for('official.get_officials', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
+                        {% else %}
+                            <span class="pagination-link disabled">Anterior</span>
+                        {% endif %}
+                        {% for num in pagination.iter_pages() %}
+                            {% if num %}
+                                {% if num == pagination.page %}
+                                    <span class="pagination-link active">{{ num }}</span>
+                                {% else %}
+                                    <a href="{{ url_for('official.get_officials', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="pagination-link">...</span>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}
+                            <a href="{{ url_for('official.get_officials', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
+                        {% else %}
+                            <span class="pagination-link disabled">Siguiente</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const tableBody = document.getElementById('officialTableBody');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = tableBody.getElementsByTagName('tr');
+
+                for (let row of rows) {
+                    let text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

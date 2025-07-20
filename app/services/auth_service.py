@@ -6,11 +6,10 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
     set_access_cookies,
-    set_refresh_cookies
+    set_refresh_cookies,
 )
 from datetime import timedelta
 from app.models.user import User
-from app.models import db
 
 class AuthService:
     @staticmethod
