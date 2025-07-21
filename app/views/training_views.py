@@ -13,6 +13,13 @@ def create_training():
         name=data.get('name'),
     )
 
+@jwt_required()
+def get_officials():
+    page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('search', None, type=str)
+    current_user = AuthService.get_current_user()
+    return TrainingService.get_all_trainings(current_user=current_user, page=page, search_query=search_query)
+
 @training_bp.route('/new', methods=['GET', 'POST'])
 @jwt_required()  # El decorador manejará automáticamente la verificación CSRF
 def new_or_update_training():
