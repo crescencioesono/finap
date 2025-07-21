@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services.rolo_service import RoleService
+from app.services.role_service import RoleService
 from flask_jwt_extended import jwt_required
 
 role_bp = Blueprint('role', __name__)

@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 from flask import render_template, make_response, flash
 from flask_jwt_extended import (
     create_access_token,

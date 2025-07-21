@@ -1,65 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if official %}Modificar Funcionario{% else %}Registrar Nuevo Funcionario{% endif %}</title>
+    <title>{% if user %}Modificar Usuario{% else %}Registrar Nuevo Usuario{% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+
 <body>
     <div class="dashboard-container">
         <button class="hamburger" aria-label="Toggle Menu">☰</button>
         <main class="main-content">
             <header class="header">
                 <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+                        alt="User Profile" class="user-icon">
                     <div class="user-dropdown">
                         <p class="user-name">{{ current_user.username }}</p>
                     </div>
                 </div>
             </header>
             <section class="content">
-                <h2>{% if official %}Modificar Funcionario{% else %}Registrar Nuevo Funcionario{% endif %}</h2>
+                <h2>{% if user %}Modificar Usuario{% else %}Registrar Nuevo Usuario{% endif %}</h2>
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
                 {% endwith %}
-                <form method="POST" action="{{ url_for('official.new_or_update_official', id=official.id if official else '') }}" id="officialForm">
-                    <input type="hidden" name="official_id" value="{{ official.id if official else '' }}">
+                <form method="POST" action="{{ url_for('user.new_or_update_user', id=user.id if user else '') }}"
+                    id="userForm">
+                    <input type="hidden" name="user_id" value="{{ user.id if user else '' }}">
                     <!-- CSRF Token será obtenido de la cookie por JavaScript -->
                     <input type="hidden" name="csrf_token" id="csrf_token" value="">
                     <div class="form-sections">
                         <div class="form-section" data-section="1">
-                            <h3>Información Personal</h3>
+                            <h3>Información del Usuario</h3>
                             <div class="form-group">
-                                <label for="first_name">Nombre:</label>
-                                <input type="text" id="first_name" name="first_name" value="{{ official.first_name if official else '' }}" required>
+                                <label for="username">Nombre de usuario:</label>
+                                <input type="text" id="username" name="username"
+                                    value="{{ user.username if user else '' }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="last_name">Apellido:</label>
-                                <input type="text" id="last_name" name="last_name" value="{{ official.last_name if official else '' }}" required>
+                                <label for="password">Contraseña:</label>
+                                <input type="text" id="password" name="password"
+                                    value="{{ user.password if user else '' }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="date_of_birth">Fecha de Nacimiento:</label>
-                                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ official.date_of_birth.strftime('%Y-%m-%d') if official and official.date_of_birth else '' }}" required>
-                            </div>
-                        </div>
-                        <div class="form-section" data-section="2">
-                            <h3>Información Laboral</h3>
-                            <div class="form-group">
-                                <label for="workplace">Lugar de Trabajo:</label>
-                                <input type="text" id="workplace" name="workplace" value="{{ official.workplace if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="level">Nivel:</label>
-                                <input type="text" id="level" name="level" value="{{ official.level if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="image">Imagen (URL):</label>
-                                <input type="text" id="image" name="image" value="{{ official.image if official else '' }}">
+                                <label for="role_id">Rol:</label>
+                                <select name="role_id" id="role_id">
+                                    {% for role in roles %}
+                                    <option value="role.id">role.name</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -74,13 +69,13 @@
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sections = document.querySelectorAll('.form-section');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const saveBtn = document.getElementById('saveBtn');
             const csrfTokenInput = document.getElementById('csrf_token');
-            const form = document.getElementById('officialForm');
+            const form = document.getElementById('userForm');
             let currentSection = 1;
 
             // Función para obtener cookie por nombre
@@ -105,18 +100,18 @@
                         method: 'GET',
                         credentials: 'include'
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.csrf_token) {
-                            csrfTokenInput.value = data.csrf_token;
-                            console.log('CSRF token fetched from server:', data.csrf_token);
-                        } else {
-                            console.error('Could not get CSRF token:', data.error || 'Unknown error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching CSRF token:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.csrf_token) {
+                                csrfTokenInput.value = data.csrf_token;
+                                console.log('CSRF token fetched from server:', data.csrf_token);
+                            } else {
+                                console.error('Could not get CSRF token:', data.error || 'Unknown error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching CSRF token:', error);
+                        });
                     return false;
                 }
             }
@@ -125,7 +120,7 @@
             loadCSRFToken();
 
             // Verificar token CSRF antes del envío del formulario
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 if (!csrfTokenInput.value) {
                     e.preventDefault();
                     console.error('Form submission blocked: No CSRF token');
@@ -164,4 +159,5 @@
         });
     </script>
 </body>
+
 </html>

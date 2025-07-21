@@ -29,23 +29,25 @@
                     {% endif %}
                 {% endwith %}
                 <div class="table-controls">
-                    <a href="{{ url_for('training.new_or_update_training') }}" class="card-link">Agregar Nuevo</a>
+                    <a href="{{ url_for('user.new_or_update_user') }}" class="card-link">Agregar Nuevo</a>
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
                 </div>
                 <table class="official-table">
                     <thead>
                         <tr>
                             <th>Nombre</th>
+                            <th>Rol</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="officialTableBody">
-                        {% for training in trainings %}
+                        {% for user in users %}
                             <tr>
-                                <td>{{ training.name }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.role.name }}</td>
                                 <td>
-                                    <a href="{{ url_for('training.new_or_update_training', id=training.id) }}" class="action-link">Modificar</a>
-                                    <!--<form action="/training/{{ training.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
+                                    <a href="{{ url_for('user.new_or_update_user', id=user.id) }}" class="action-link">Modificar</a>
+                                    <!--<form action="/user/{{ user.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="action-link">Eliminar</button>
                                     </form>-->
@@ -57,7 +59,7 @@
                 {% if pagination.pages > 1 %}
                     <div class="pagination">
                         {% if pagination.has_prev %}
-                            <a href="{{ url_for('training.get_trainings', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
+                            <a href="{{ url_for('user.get_users', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
                         {% else %}
                             <span class="pagination-link disabled">Anterior</span>
                         {% endif %}
@@ -66,14 +68,14 @@
                                 {% if num == pagination.page %}
                                     <span class="pagination-link active">{{ num }}</span>
                                 {% else %}
-                                    <a href="{{ url_for('training.get_trainings', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
+                                    <a href="{{ url_for('user.get_users', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
                                 {% endif %}
                             {% else %}
                                 <span class="pagination-link">...</span>
                             {% endif %}
                         {% endfor %}
                         {% if pagination.has_next %}
-                            <a href="{{ url_for('training.get_trainings', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
+                            <a href="{{ url_for('user.get_users', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
                         {% else %}
                             <span class="pagination-link disabled">Siguiente</span>
                         {% endif %}

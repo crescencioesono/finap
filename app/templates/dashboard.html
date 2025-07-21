@@ -15,7 +15,6 @@
                     <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
                     <div class="user-dropdown">
                         <p class="user-name">{{ current_user.username }}</p>
-                        <p class="user-email">{{ current_user.email }}</p>
                     </div>
                 </div>
             </header>

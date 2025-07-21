@@ -8,7 +8,11 @@ class RoleService:
         db.session.add(new_role)
         db.session.commit()
         return new_role
-
+    
+    @staticmethod
+    def get_all_roles():
+        return Role.query.all()
+    
     @staticmethod
     def get_role_by_id(role_id):
         return Role.query.get(role_id)
