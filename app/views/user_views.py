@@ -16,8 +16,9 @@ def create_user():
         role_id=data.get('role_id')
     )
 
+@user_bp.route('/', methods=['GET'])
 @jwt_required()
-def get_Users():
+def get_users():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
     current_user = AuthService.get_current_user()

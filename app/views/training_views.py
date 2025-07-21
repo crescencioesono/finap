@@ -13,8 +13,9 @@ def create_training():
         name=data.get('name'),
     )
 
+@training_bp.route('/', methods=['GET'])
 @jwt_required()
-def get_officials():
+def get_trainings():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
     current_user = AuthService.get_current_user()
