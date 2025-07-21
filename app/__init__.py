@@ -22,8 +22,6 @@ def create_app():
     app.config['JWT_REFRESH_CSRF_COOKIE_NAME'] = 'csrf_refresh_token'
 
     jwt = JWTManager(app)
-
-    jwt = JWTManager(app)
     
     @app.errorhandler(401)
     def handle_unauthorized(error):
@@ -78,7 +76,7 @@ def create_app():
         app.register_blueprint(auth_views.auth_bp, url_prefix='/')
         app.register_blueprint(user_views.user_bp, url_prefix='/user')
         app.register_blueprint(role_views.role_bp, url_prefix='/role')
-        app.register_blueprint(official_views.training_bp, url_prefix='/official')
+        app.register_blueprint(official_views.official_bp, url_prefix='/official')
         app.register_blueprint(training_views.training_bp, url_prefix='/training')
         app.register_blueprint(training_history_views.training_history_bp, url_prefix='/training-history')
         app.register_blueprint(log_views.log_bp, url_prefix='/log')
