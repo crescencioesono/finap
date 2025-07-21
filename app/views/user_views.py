@@ -16,6 +16,13 @@ def create_user():
         role_id=data.get('role_id')
     )
 
+@jwt_required()
+def get_Users():
+    page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('search', None, type=str)
+    current_user = AuthService.get_current_user()
+    return UserService.get_all_users(current_user=current_user, page=page, search_query=search_query)
+
 @user_bp.route('/new', methods=['GET', 'POST'])
 @jwt_required()  # El decorador manejará automáticamente la verificación CSRF
 def new_or_update_user():
