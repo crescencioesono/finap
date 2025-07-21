@@ -125,7 +125,7 @@
             loadCSRFToken();
 
             // Verificar token CSRF antes del envío del formulario
-            form.addEventListener('submit', function(e) {
+            /**form.addEventListener('submit', function(e) {
                 if (!csrfTokenInput.value) {
                     e.preventDefault();
                     console.error('Form submission blocked: No CSRF token');
@@ -133,7 +133,7 @@
                     return false;
                 }
                 console.log('Form submitted with CSRF token:', csrfTokenInput.value);
-            });
+            });**/
 
             function showSection(sectionNum) {
                 sections.forEach(section => section.classList.remove('active'));

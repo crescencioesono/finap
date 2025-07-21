@@ -7,3 +7,5 @@ class Training(db.Model):
     name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    
+    batch = db.relationship('Batch', secondary='batch_trainings', back_populates='training')
