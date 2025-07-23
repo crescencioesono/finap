@@ -1,5 +1,5 @@
-from sqlalchemy.sql import func
 from app.models import db
+from sqlalchemy import func
 
 batch_training = db.Table(
     'batch_trainings',
@@ -12,6 +12,7 @@ class Batch(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())
 
-    user = db.relationship('User', backref='batch', lazy=True)
-    training = db.relationship('Training', secondary='batch_trainings', back_populates='batch')
+    trainings = db.relationship('Training', secondary='batch_trainings', back_populates='batches')  # Changed to plural

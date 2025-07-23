@@ -16,6 +16,13 @@ const menuConfig = {
             ]
         },
         {
+            label: 'Códigos de cursos',
+            submenuId: 'codigos-submenu',
+            subItems: [
+                { label: 'Ver Códigos', url: '/batch/' } // Hardcoded URL for now
+            ]
+        },
+        {
             label: 'Usuarios',
             submenuId: 'usuarios-submenu',
             subItems: [

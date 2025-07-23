@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
-from app.views import auth_views, user_views, role_views, official_views, training_views, training_history_views, log_views
+from app.views import auth_views, user_views, official_views, training_views, batch_views, training_history_views, log_views
 from app.models import db
 from app.models.user import User
 from app.models.role import Role
@@ -75,8 +75,8 @@ def create_app():
         # Register blueprints
         app.register_blueprint(auth_views.auth_bp, url_prefix='/')
         app.register_blueprint(user_views.user_bp, url_prefix='/user')
-        app.register_blueprint(role_views.role_bp, url_prefix='/role')
         app.register_blueprint(official_views.official_bp, url_prefix='/official')
+        app.register_blueprint(batch_views.batch_bp, url_prefix='/batch')
         app.register_blueprint(training_views.training_bp, url_prefix='/training')
         app.register_blueprint(training_history_views.training_history_bp, url_prefix='/training-history')
         app.register_blueprint(log_views.log_bp, url_prefix='/log')
