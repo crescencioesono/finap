@@ -4,13 +4,17 @@ from app.models.official import Official
 
 class OfficialService:
     @staticmethod
-    def create_official(first_name, last_name, date_of_birth, workplace, level, image=None):
+    def create_official(first_name, last_name, date_of_birth, country, address, phone_number, workplace, level, email=None, image=None):
         new_official = Official(
             first_name=first_name,
             last_name=last_name,
             date_of_birth=date_of_birth,
+            country=country,
+            address=address,
+            phone_number=phone_number,
             workplace=workplace,
             level=level,
+            email=email,
             image=image
         )
         db.session.add(new_official)
@@ -27,6 +31,10 @@ class OfficialService:
             query = query.filter(
                 (Official.first_name.ilike(search)) |
                 (Official.last_name.ilike(search)) |
+                (Official.country.ilike(search)) |  # New field
+                (Official.address.ilike(search)) |  # New field
+                (Official.phone_number.ilike(search)) |  # New field
+                (Official.email.ilike(search)) |  # New field
                 (Official.workplace.ilike(search)) |
                 (Official.level.ilike(search))
             )
