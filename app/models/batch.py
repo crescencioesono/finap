@@ -14,5 +14,9 @@ class Batch(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())
-
+    
+    __table_args__ = (
+        db.UniqueConstraint('code', name='unique_batch_code'),
+    )
+    
     trainings = db.relationship('Training', secondary='batch_trainings', back_populates='batches')  # Changed to plural

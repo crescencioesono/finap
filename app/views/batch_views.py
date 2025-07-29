@@ -2,7 +2,6 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash
 from app.services.batch_service import BatchService
 from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
-from app.utils.auth_decorators import role_required
 from app.services.log_service import LogService
 
 batch_bp = Blueprint('batch', __name__)
@@ -40,8 +39,9 @@ def new_or_update_batch():
                 description=data.get('description'),
                 trainings=data.getlist('trainings')  # Handle multiple training IDs
             )
+            print(result)
             current_user = AuthService.get_current_user()
-            LogService.create_log(f"Creó el código {result.id} por el usuario {current_user.id}", f"Datos: {data}")
+            LogService.create_log(f"Creó un código por el usuario {current_user.id}", f"Datos: {data}")
             return result
     else:  # GET
         batch = None
@@ -84,7 +84,6 @@ def update_batch(batch_id):
 
 @batch_bp.route('/<int:batch_id>', methods=['POST'])
 @jwt_required()
-@role_required('admin')
 def delete_batch(batch_id):
     result = BatchService.delete_batch(batch_id)
     current_user = AuthService.get_current_user()

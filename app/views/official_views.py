@@ -5,7 +5,6 @@ from app.services.auth_service import AuthService
 from app.models import db
 from app.models.batch import Batch
 from app.models.training_history import TrainingHistory
-from app.utils.auth_decorators import role_required
 from app.services.log_service import LogService
 
 official_bp = Blueprint('official', __name__)
@@ -58,7 +57,7 @@ def new_or_update_official():
                 image=data.get('image')
             )
             current_user = AuthService.get_current_user()
-            LogService.create_log(f"Creó el funcionario {result.id} por el usuario {current_user.id}", f"Datos: {data}")
+            LogService.create_log(f"Creó un funcionario por el usuario {current_user.id}", f"Datos: {data}")
             return result
     else:  # GET
         official = None
@@ -86,7 +85,6 @@ def get_official(official_id):
 
 @official_bp.route('/<int:official_id>', methods=['DELETE'])
 @jwt_required()
-@role_required('admin')
 def delete_official(official_id):
     result = OfficialService.delete_official(official_id)
     current_user = AuthService.get_current_user()

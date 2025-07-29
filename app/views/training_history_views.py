@@ -18,7 +18,7 @@ def get_training_history():
 
 @training_history_bp.route('/<int:history_id>', methods=['GET'])
 @jwt_required()
-def get_training_history(history_id):
+def get_training_history_by_id(history_id):
     try:
         history = TrainingHistoryService.get_training_history_by_id(history_id)
         current_user = AuthService.get_current_user()

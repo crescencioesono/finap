@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Capacitaciones</title>
+    <title>Lista de Cursos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <!-- Debug: Check if CSS is loaded in browser Network tab -->
 </head>
@@ -20,41 +20,36 @@
                 </div>
             </header>
             <section class="content">
-                <h2 class="page-title">Historial de Capacitaciones</h2>
+                <h2>Lista de Cursos</h2>
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
+                            <div class="message {{ category }}">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
                 <div class="table-controls">
+                    <a href="{{ url_for('training.new_or_update_training') }}" class="card-link">Agregar Nuevo</a>
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
                 </div>
                 <table class="official-table">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Código del Curso</th>
-                            <th>Fecha de Finalización</th>
-                            <th>Ciudad</th>
-                            <th>Modalidad</th>
-                            <th>Duración</th>
-                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="trainingTableBody">
-                        {% for history in training_history %}
+                    <tbody id="officialTableBody">
+                        {% for training in trainings %}
                             <tr>
-                                <td>{{ history.official.first_name }}</td>
-                                <td>{{ history.official.last_name }}</td>
-                                <td>{{ history.batch.code if history.batch else 'No asignado' }}</td>
-                                <td>{{ history.end_date.strftime('%Y-%m-%d') }}</td>
-                                <td>{{ history.training_city }}</td>
-                                <td>{{ history.modality }}</td>
-                                <td>{{ history.duration }}</td>
-                                <td>{{ history.status }}</td>
+                                <td>{{ training.name }}</td>
+                                <td>
+                                    <a href="{{ url_for('training.new_or_update_training', id=training.id) }}" class="action-link">Modificar</a>
+                                    <!--<form action="/training/{{ training.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="action-link">Eliminar</button>
+                                    </form>-->
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -62,7 +57,7 @@
                 {% if pagination.pages > 1 %}
                     <div class="pagination">
                         {% if pagination.has_prev %}
-                            <a href="{{ url_for('training_history.get_training_history', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
+                            <a href="{{ url_for('training.get_trainings', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
                         {% else %}
                             <span class="pagination-link disabled">Anterior</span>
                         {% endif %}
@@ -71,14 +66,14 @@
                                 {% if num == pagination.page %}
                                     <span class="pagination-link active">{{ num }}</span>
                                 {% else %}
-                                    <a href="{{ url_for('training_history.get_training_history', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
+                                    <a href="{{ url_for('training.get_trainings', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
                                 {% endif %}
                             {% else %}
                                 <span class="pagination-link">...</span>
                             {% endif %}
                         {% endfor %}
                         {% if pagination.has_next %}
-                            <a href="{{ url_for('training_history.get_training_history', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
+                            <a href="{{ url_for('training.get_trainings', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
                         {% else %}
                             <span class="pagination-link disabled">Siguiente</span>
                         {% endif %}
@@ -91,7 +86,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('trainingTableBody');
+            const tableBody = document.getElementById('officialTableBody');
 
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
@@ -100,12 +95,6 @@
                 for (let row of rows) {
                     let text = row.textContent.toLowerCase();
                     row.style.display = text.includes(searchTerm) ? '' : 'none';
-                }
-            });
-
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    window.location.href = "{{ url_for('training_history.get_training_history', page=pagination.page, search='') }}".replace('search=', 'search=' + encodeURIComponent(this.value));
                 }
             });
         });

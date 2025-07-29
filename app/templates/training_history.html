@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Capacitaciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Debug: Check if CSS is loaded in browser Network tab -->
+</head>
+<body>
+    <div class="dashboard-container">
+        <button class="hamburger" aria-label="Toggle Menu">☰</button>
+        <main class="main-content">
+            <header class="header">
+                <div class="user-profile">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
+                    <div class="user-dropdown">
+                        <p class="user-name">{{ current_user.username }}</p>
+                    </div>
+                </div>
+            </header>
+            <section class="content">
+                <h2 class="page-title">Historial de Capacitaciones</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="message {{ category }} alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="table-controls">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
+                </div>
+                <table class="official-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Código del Curso</th>
+                            <th>Fecha de Finalización</th>
+                            <th>Ciudad</th>
+                            <th>Modalidad</th>
+                            <th>Duración</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainingTableBody">
+                        {% for history in training_history %}
+                            <tr>
+                                <td>{{ history.official.first_name }}</td>
+                                <td>{{ history.official.last_name }}</td>
+                                <td>{{ history.batch.code if history.batch else 'No asignado' }}</td>
+                                <td>{{ history.end_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ history.training_city }}</td>
+                                <td>{{ history.modality }}</td>
+                                <td>{{ history.duration }}</td>
+                                <td>{{ history.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if pagination.pages > 1 %}
+                    <div class="pagination">
+                        {% if pagination.has_prev %}
+                            <a href="{{ url_for('training_history.get_training_history', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
+                        {% else %}
+                            <span class="pagination-link disabled">Anterior</span>
+                        {% endif %}
+                        {% for num in pagination.iter_pages() %}
+                            {% if num %}
+                                {% if num == pagination.page %}
+                                    <span class="pagination-link active">{{ num }}</span>
+                                {% else %}
+                                    <a href="{{ url_for('training_history.get_training_history', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="pagination-link">...</span>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}
+                            <a href="{{ url_for('training_history.get_training_history', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
+                        {% else %}
+                            <span class="pagination-link disabled">Siguiente</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const tableBody = document.getElementById('trainingTableBody');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = tableBody.getElementsByTagName('tr');
+
+                for (let row of rows) {
+                    let text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                }
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    window.location.href = "{{ url_for('training_history.get_training_history', page=pagination.page, search='') }}".replace('search=', 'search=' + encodeURIComponent(this.value));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -101,35 +101,6 @@
                                     <div class="detail-item">
                                         <strong>Última Actualización:</strong> <span class="detail-value">{{ history.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                                     </div>
-                                    <div class="detail-card">
-                                        <h4 class="card-title">Seguimiento del Curso</h4>
-                                        {% if history.batch_tracking %}
-                                            {% for tracking in history.batch_tracking %}
-                                                <div class="tracking-item">
-                                                    <div class="detail-item">
-                                                        <strong>Curso:</strong> <span class="detail-value">{{ tracking.training.name if tracking.training else 'No asignado' }}</span>
-                                                    </div>
-                                                    <div class="detail-item">
-                                                        <strong>Estado:</strong> <span class="detail-value">{{ tracking.status }}</span>
-                                                    </div>
-                                                    <div class="detail-item">
-                                                        <strong>Fecha de Finalización:</strong> <span class="detail-value">{{ tracking.end_date.strftime('%Y-%m-%d') if tracking.end_date else 'No especificada' }}</span>
-                                                    </div>
-                                                    <div class="detail-item">
-                                                        <strong>Calificación:</strong> <span class="detail-value">{{ tracking.grade if tracking.grade is not none else 'No asignada' }}</span>
-                                                    </div>
-                                                    <div class="detail-item">
-                                                        <strong>Fecha de Creación:</strong> <span class="detail-value">{{ tracking.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-                                                    </div>
-                                                    <div class="detail-item">
-                                                        <strong>Última Actualización:</strong> <span class="detail-value">{{ tracking.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
-                                        {% else %}
-                                            <p class="no-data">No hay seguimiento de cursos.</p>
-                                        {% endif %}
-                                    </div>
                                 </div>
                             {% endfor %}
                         {% else %}

@@ -56,6 +56,7 @@
                                         <button type="submit" class="action-link">Eliminar</button>
                                     </form>-->
                                     <a href="{{ url_for('official.assign_course', official_id=official.id) }}" class="action-link">Asignar Curso</a>
+                                    <a href="{{ url_for('official.get_official', official_id=official.id) }}" class="action-link">Ver detalles</a>
                                 </td>
                             </tr>
                         {% endfor %}

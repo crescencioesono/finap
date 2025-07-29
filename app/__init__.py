@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required
 from app.views import auth_views, user_views, official_views, training_views, batch_views, training_history_views, log_views
 from app.models import db
-from app.models.user import User
-from app.models.role import Role
 from werkzeug.security import generate_password_hash
 
 def create_app():
@@ -40,9 +38,24 @@ def create_app():
         except Exception as e:
             return jsonify({'error': str(e)}), 422
 
+    # Initialize database
+    db.init_app(app)
+    
     with app.app_context():
-        db.init_app(app)
-        db.create_all()  # Create database tables
+        # IMPORTANT: Import ALL models BEFORE calling db.create_all()
+        # This ensures SQLAlchemy knows about all models and their relationships
+        from app.models.user import User
+        from app.models.role import Role
+        from app.models.official import Official
+        from app.models.batch import Batch
+        from app.models.training import Training
+        from app.models.training_history import TrainingHistory
+        from app.models.batch_tracking import BatchTracking
+        from app.models.log import Log
+        # Import any other models you have
+        
+        # Now create all tables - SQLAlchemy knows about all models
+        db.create_all()
         
         # Create default roles if they don't exist
         if not Role.query.filter_by(name='admin').first():
@@ -72,7 +85,7 @@ def create_app():
             db.session.add(default_user)
             db.session.commit()
 
-        # Register blueprints
+        # Register blueprints (moved outside app_context)
         app.register_blueprint(auth_views.auth_bp, url_prefix='/')
         app.register_blueprint(user_views.user_bp, url_prefix='/user')
         app.register_blueprint(official_views.official_bp, url_prefix='/official')
