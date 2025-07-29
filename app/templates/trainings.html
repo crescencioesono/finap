@@ -36,7 +36,6 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Código</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -44,7 +43,6 @@
                         {% for training in trainings %}
                             <tr>
                                 <td>{{ training.name }}</td>
-                                <td>{{ training.batches.code }}</td>
                                 <td>
                                     <a href="{{ url_for('training.new_or_update_training', id=training.id) }}" class="action-link">Modificar</a>
                                     <!--<form action="/training/{{ training.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">

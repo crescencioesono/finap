@@ -17,4 +17,4 @@ class Official(db.Model):
     created_at = db.Column(db.DateTime, default=func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())
     
-    training_history = db.relationship('Training_History', back_populates='official', lazy=True)
+    training_history = db.relationship('TrainingHistory', back_populates='official', lazy=True)

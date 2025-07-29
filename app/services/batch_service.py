@@ -25,7 +25,7 @@ class BatchService:
 
     @staticmethod
     def get_batch_by_id(batch_id):
-        batch = Batch.query.get_or_404(batch_id)
+        batch = Batch.query.options(db.joinedload(Batch.trainings)).get_or_404(batch_id)
         return batch
 
     @staticmethod

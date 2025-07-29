@@ -39,6 +39,10 @@ def new_or_update_official():
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
                 date_of_birth=data.get('date_of_birth'),
+                country=data.get('country'),
+                address=data.get('address'),
+                phone_number=data.get('phone_number'),
+                email=data.get('email'),
                 workplace=data.get('workplace'),
                 level=data.get('level'),
                 image=data.get('image')
@@ -48,6 +52,10 @@ def new_or_update_official():
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
                 date_of_birth=data.get('date_of_birth'),
+                country=data.get('country'),
+                address=data.get('address'),
+                phone_number=data.get('phone_number'),
+                email=data.get('email'),
                 workplace=data.get('workplace'),
                 level=data.get('level'),
                 image=data.get('image')

@@ -37,8 +37,6 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Apellidos</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>País</th> <!-- New field -->
                             <th>Dirección</th> <!-- New field -->
                             <th>Teléfono</th> <!-- New field -->
                             <th>Acciones</th>
@@ -49,17 +47,15 @@
                             <tr>
                                 <td>{{ official.first_name }}</td>
                                 <td>{{ official.last_name }}</td>
-                                <td>{{ official.date_of_birth }}</td>
-                                <td>{{ official.country }}</td> <!-- New field -->
                                 <td>{{ official.address }}</td> <!-- New field -->
                                 <td>{{ official.phone_number }}</td> <!-- New field -->
                                 <td>
                                     <a href="{{ url_for('official.new_or_update_official', id=official.id) }}" class="action-link">Modificar</a>
-                                    <form action="{{ url_for('official.delete_official', official_id=official.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
+                                    <!--<form action="{{ url_for('official.delete_official', official_id=official.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="action-link">Eliminar</button>
-                                    </form>
-                                    <a href="{{ url_for('official.assign_course', official_id=official.id) }}" class="action-link">Asignar Nuevo Curso</a>
+                                    </form>-->
+                                    <a href="{{ url_for('official.assign_course', official_id=official.id) }}" class="action-link">Asignar Curso</a>
                                 </td>
                             </tr>
                         {% endfor %}

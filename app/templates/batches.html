@@ -1,108 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lista de Códigos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
     <!-- Debug: Check if CSS is loaded in browser Network tab -->
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
-                </div>
-            </header>
-            <section class="content">
-                <h2>Lista de Códigos</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <div class="table-controls">
-                    <a href="{{ url_for('batch.new_or_update_batch') }}" class="card-link">Agregar Nuevo</a>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ search_query }}">
-                </div>
-                <table class="official-table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="officialTableBody">
-                        {% for batch in batches.items %}
-                            <tr>
-                                <td>{{ batch.code }}</td>
-                                <td>{{ batch.description }}</td>
-                                <td>
-                                    <a href="{{ url_for('batch.new_or_update_batch', id=batch.id) }}" class="action-link">Modificar</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% if batches.pages > 1 %}
-                    <div class="pagination">
-                        {% if batches.has_prev %}
-                            <a href="{{ url_for('batch.get_batches', page=batches.prev_num, search=search_query) }}" class="pagination-link">Anterior</a>
-                        {% else %}
-                            <span class="pagination-link disabled">Anterior</span>
-                        {% endif %}
-                        {% for num in batches.iter_pages() %}
-                            {% if num %}
-                                {% if num == batches.page %}
-                                    <span class="pagination-link active">{{ num }}</span>
-                                {% else %}
-                                    <a href="{{ url_for('batch.get_batches', page=num, search=search_query) }}" class="pagination-link">{{ num }}</a>
-                                {% endif %}
-                            {% else %}
-                                <span class="pagination-link">...</span>
-                            {% endif %}
-                        {% endfor %}
-                        {% if batches.has_next %}
-                            <a href="{{ url_for('batch.get_batches', page=batches.next_num, search=search_query) }}" class="pagination-link">Siguiente</a>
-                        {% else %}
-                            <span class="pagination-link disabled">Siguiente</span>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </section>
-        </main>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2>Lista de Códigos</h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <div class="table-controls">
+            <a
+              href="{{ url_for('batch.new_or_update_batch') }}"
+              class="card-link"
+              >Agregar Nuevo</a
+            >
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Buscar..."
+              value="{{ search_query }}"
+            />
+          </div>
+          <table class="official-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="officialTableBody">
+              {% for batch in batches.items %}
+              <tr>
+                <td>{{ batch.code }}</td>
+                <td>{{ batch.description }}</td>
+                <td>
+                  <a
+                    href="{{ url_for('batch.new_or_update_batch', id=batch.id) }}"
+                    class="action-link"
+                    >Modificar</a
+                  >
+                  <a
+                    href="{{ url_for('batch.get_batch', batch_id=batch.id) }}"
+                    class="action-link"
+                    >Ver detalles</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if batches.pages > 1 %}
+          <div class="pagination">
+            {% if batches.has_prev %}
+            <a
+              href="{{ url_for('batch.get_batches', page=batches.prev_num, search=search_query) }}"
+              class="pagination-link"
+              >Anterior</a
+            >
+            {% else %}
+            <span class="pagination-link disabled">Anterior</span>
+            {% endif %} {% for num in batches.iter_pages() %} {% if num %} {% if
+            num == batches.page %}
+            <span class="pagination-link active">{{ num }}</span>
+            {% else %}
+            <a
+              href="{{ url_for('batch.get_batches', page=num, search=search_query) }}"
+              class="pagination-link"
+              >{{ num }}</a
+            >
+            {% endif %} {% else %}
+            <span class="pagination-link">...</span>
+            {% endif %} {% endfor %} {% if batches.has_next %}
+            <a
+              href="{{ url_for('batch.get_batches', page=batches.next_num, search=search_query) }}"
+              class="pagination-link"
+              >Siguiente</a
+            >
+            {% else %}
+            <span class="pagination-link disabled">Siguiente</span>
+            {% endif %}
+          </div>
+          {% endif %}
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('officialTableBody');
+      document.addEventListener('DOMContentLoaded', function() {
+          const searchInput = document.getElementById('searchInput');
+          const tableBody = document.getElementById('officialTableBody');
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = tableBody.getElementsByTagName('tr');
+          searchInput.addEventListener('input', function() {
+              const searchTerm = this.value.toLowerCase();
+              const rows = tableBody.getElementsByTagName('tr');
 
-                for (let row of rows) {
-                    let text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
-                }
-            });
+              for (let row of rows) {
+                  let text = row.textContent.toLowerCase();
+                  row.style.display = text.includes(searchTerm) ? '' : 'none';
+              }
+          });
 
-            // Add search submission on Enter key
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    window.location.href = '{{ url_for('batch.get_batches', page=page, search='') }}'.replace('search=', 'search=' + encodeURIComponent(this.value));
-                }
-            });
-        });
+          // Add search submission on Enter key
+          searchInput.addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                  window.location.href = '{{ url_for('batch.get_batches', page=page, search='') }}'.replace('search=', 'search=' + encodeURIComponent(this.value));
+              }
+          });
+      });
     </script>
-</body>
+  </body>
 </html>

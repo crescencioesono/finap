@@ -62,7 +62,7 @@ def get_batch(batch_id):
     try:
         batch = BatchService.get_batch_by_id(batch_id)
         current_user = AuthService.get_current_user()
-        return render_template('batch_detail.html', batch=batch, current_user=current_user)
+        return render_template('batch_detail.html', batch=batch, trainings=batch.trainings, current_user=current_user)
     except ValueError as e:
         flash(str(e), 'error')
         return redirect(url_for('batch.get_batches'))

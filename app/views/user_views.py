@@ -1,8 +1,9 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask_jwt_extended import jwt_required
+from werkzeug.security import generate_password_hash
 from app.services.user_service import UserService
 from app.services.role_service import RoleService
 from app.services.auth_service import AuthService
-from flask_jwt_extended import jwt_required
 
 user_bp = Blueprint('user', __name__)
 
@@ -35,22 +36,21 @@ def new_or_update_user():
             return UserService.update_user(
                 user_id=user_id,
                 username=data.get('username'),
-                password=data.get('password'),
+                password=generate_password_hash(data.get('password')),
                 role_id=data.get('role_id')
             )
         else:
             return UserService.create_user(
                 username=data.get('username'),
-                password=data.get('password'),
+                password=generate_password_hash(data.get('password')),
                 role_id=data.get('role_id')
             )
     else:  # GET
         user = None
-        roles = []
+        roles = RoleService.get_all_roles()
         if user_id:
             try:
-                user = UserService.get_user_by_id(user_id)
-                roles = RoleService.get_all_roles()
+                user = UserService.get_user_by_id(user_id)  
             except ValueError as e:
                 flash(str(e), 'error')
                 return redirect(url_for('user.get_users'))
