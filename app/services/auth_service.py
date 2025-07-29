@@ -31,24 +31,19 @@ class AuthService:
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
         flash('Login exitoso!', 'success')
-        return response
+        return response, 200
 
     @staticmethod
     @jwt_required(refresh=True)
     def refresh_token():
-        current_username = get_jwt_identity()
-        new_access_token = create_access_token(identity=current_username, expires_delta=timedelta(hours=1))
-        
-        # Create response with dashboard template
-        user = User.query.filter_by(username=current_username).first()
-        if not user:
-            flash('Usuario no encontrado', 'error')
-            return render_template('login.html'), 401
-        
-        response = make_response(render_template('dashboard.html', current_user=user))
-        set_access_cookies(response, new_access_token)
-        flash('Token actualizado exitosamente', 'success')
-        return response
+        try:
+            new_access_token = create_access_token(identity=get_jwt_identity(), expires_delta=timedelta(hours=1))
+            response = make_response({"message": "Token refreshed"})
+            set_access_cookies(response, new_access_token)
+            return response, 200
+        except Exception as e:
+            flash('Error al refrescar el token', 'error')
+            return make_response({"error": str(e)}), 500
 
     @staticmethod
     @jwt_required()

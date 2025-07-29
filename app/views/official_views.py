@@ -1,12 +1,12 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_jwt_extended import jwt_required
-
 from app.services.official_service import OfficialService
 from app.services.auth_service import AuthService
 from app.models import db
 from app.models.batch import Batch
 from app.models.training_history import TrainingHistory
 from app.utils.auth_decorators import role_required
+from app.services.log_service import LogService
 
 official_bp = Blueprint('official', __name__)
 
@@ -16,7 +16,9 @@ def get_officials():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
     current_user = AuthService.get_current_user()
-    return OfficialService.get_all_officials(current_user=current_user, page=page, search_query=search_query)
+    result = OfficialService.get_all_officials(current_user=current_user, page=page, search_query=search_query)
+    LogService.create_log(f"Vio la lista de funcionarios por el usuario {current_user.id}", f"Página: {page}, Búsqueda: {search_query}")
+    return result
 
 @official_bp.route('/new', methods=['GET', 'POST'])
 @jwt_required()  # El decorador manejará automáticamente la verificación CSRF
@@ -26,7 +28,7 @@ def new_or_update_official():
         data = request.form
         official_id = data.get('official_id')
         if official_id:
-            return OfficialService.update_official(
+            result = OfficialService.update_official(
                 official_id=official_id,
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
@@ -39,8 +41,11 @@ def new_or_update_official():
                 level=data.get('level'),
                 image=data.get('image')
             )
+            current_user = AuthService.get_current_user()
+            LogService.create_log(f"Actualizó el funcionario {official_id} por el usuario {current_user.id}", f"Datos: {data}")
+            return result
         else:
-            return OfficialService.create_official(
+            result = OfficialService.create_official(
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
                 date_of_birth=data.get('date_of_birth'),
@@ -52,6 +57,9 @@ def new_or_update_official():
                 level=data.get('level'),
                 image=data.get('image')
             )
+            current_user = AuthService.get_current_user()
+            LogService.create_log(f"Creó el funcionario {result.id} por el usuario {current_user.id}", f"Datos: {data}")
+            return result
     else:  # GET
         official = None
         if official_id:
@@ -61,6 +69,7 @@ def new_or_update_official():
                 flash(str(e), 'error')
                 return redirect(url_for('official.get_officials'))
         current_user = AuthService.get_current_user()
+        LogService.create_log(f"Vio el formulario de nuevo/actualizar funcionario por el usuario {current_user.id}", f"ID de funcionario: {official_id}")
         return render_template('new_official.html', official=official, current_user=current_user, section=1)
 
 @official_bp.route('/<int:official_id>', methods=['GET'])
@@ -69,6 +78,7 @@ def get_official(official_id):
     try:
         official = OfficialService.get_official_by_id(official_id)
         current_user = AuthService.get_current_user()
+        LogService.create_log(f"Vio los detalles del funcionario {official_id} por el usuario {current_user.id}")
         return render_template('official_detail.html', official=official, current_user=current_user)
     except ValueError as e:
         flash(str(e), 'error')
@@ -78,7 +88,10 @@ def get_official(official_id):
 @jwt_required()
 @role_required('admin')
 def delete_official(official_id):
-    return OfficialService.delete_official(official_id)
+    result = OfficialService.delete_official(official_id)
+    current_user = AuthService.get_current_user()
+    LogService.create_log(f"Eliminó el funcionario {official_id} por el usuario {current_user.id}")
+    return result
 
 @official_bp.route('/<int:official_id>/assign-course', methods=['GET', 'POST'])
 @jwt_required()
@@ -102,6 +115,8 @@ def assign_course(official_id):
                 existing_training.other_info = data.get('other_info')
                 db.session.commit()
                 flash('Curso actualizado exitosamente', 'success')
+                current_user = AuthService.get_current_user()
+                LogService.create_log(f"Actualizó el curso para el funcionario {official_id} por el usuario {current_user.id}", f"ID de código: {data.get('batch_id')}, Datos: {data}")
             else:
                 # Create new record
                 new_training = TrainingHistory(
@@ -117,10 +132,14 @@ def assign_course(official_id):
                 db.session.add(new_training)
                 db.session.commit()
                 flash('Curso asignado exitosamente', 'success')
+                current_user = AuthService.get_current_user()
+                LogService.create_log(f"Asignó un curso al funcionario {official_id} por el usuario {current_user.id}", f"ID de código: {data.get('batch_id')}, Datos: {data}")
             return redirect(url_for('official.get_officials'))
         else:  # GET
             batches = Batch.query.all()  # Fetch all batches for the dropdown
-            return render_template('assign_course.html', official=official, batches=batches, current_user=AuthService.get_current_user())
+            current_user = AuthService.get_current_user()
+            LogService.create_log(f"Vio el formulario de asignar curso para el funcionario {official_id} por el usuario {current_user.id}")
+            return render_template('assign_course.html', official=official, batches=batches, current_user=current_user)
     except ValueError as e:
         flash(str(e), 'error')
         return redirect(url_for('official.get_officials'))

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
+from app.services.log_service import LogService
 from app.services.training_service import TrainingService
 from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
@@ -7,21 +8,15 @@ from app.utils.auth_decorators import role_required
 
 training_bp = Blueprint('training', __name__)
 
-@training_bp.route('/', methods=['POST'])
-@jwt_required()
-def create_training():
-    data = request.form
-    return TrainingService.create_training(
-        name=data.get('name'),
-    )
-
 @training_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_trainings():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
     current_user = AuthService.get_current_user()
-    return TrainingService.get_all_trainings(current_user=current_user, page=page, search_query=search_query)
+    result = TrainingService.get_all_trainings(current_user=current_user, page=page, search_query=search_query)
+    LogService.create_log(f"Vio los cursos por el usuario {current_user.id}", f"Página: {page}, Búsqueda: {search_query}")
+    return result
 
 @training_bp.route('/new', methods=['GET', 'POST'])
 @jwt_required()  # El decorador manejará automáticamente la verificación CSRF

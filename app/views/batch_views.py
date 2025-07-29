@@ -2,20 +2,10 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash
 from app.services.batch_service import BatchService
 from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
-
 from app.utils.auth_decorators import role_required
+from app.services.log_service import LogService
 
 batch_bp = Blueprint('batch', __name__)
-
-@batch_bp.route('/', methods=['POST'])
-@jwt_required()
-def create_batch():
-    data = request.form
-    return BatchService.create_batch(
-        code=data.get('code'),
-        description=data.get('description'),
-        trainings=data.getlist('trainings')  # Handle multiple training IDs
-    )
 
 @batch_bp.route('/', methods=['GET'])
 @jwt_required()
@@ -24,6 +14,7 @@ def get_batches():
     search_query = request.args.get('search', None, type=str)
     current_user = AuthService.get_current_user()
     batches = BatchService.get_all_batches(current_user=current_user, page=page, search_query=search_query)
+    LogService.create_log(f"Vio la lista de códigos por el usuario {current_user.id}", f"Página: {page}, Búsqueda: {search_query}")
     return render_template('batches.html', batches=batches, current_user=current_user, page=page, search_query=search_query)
 
 @batch_bp.route('/new', methods=['GET', 'POST'])
@@ -34,18 +25,24 @@ def new_or_update_batch():
         data = request.form
         batch_id = data.get('batch_id')
         if batch_id:
-            return BatchService.update_batch(
+            result = BatchService.update_batch(
                 batch_id=batch_id,
                 code=data.get('code'),
                 description=data.get('description'),
                 trainings=data.getlist('trainings')  # Handle multiple training IDs
             )
+            current_user = AuthService.get_current_user()
+            LogService.create_log(f"Actualizó el código {batch_id} por el usuario {current_user.id}", f"Datos: {data}")
+            return result
         else:
-            return BatchService.create_batch(
+            result = BatchService.create_batch(
                 code=data.get('code'),
                 description=data.get('description'),
                 trainings=data.getlist('trainings')  # Handle multiple training IDs
             )
+            current_user = AuthService.get_current_user()
+            LogService.create_log(f"Creó el código {result.id} por el usuario {current_user.id}", f"Datos: {data}")
+            return result
     else:  # GET
         batch = None
         trainings = BatchService.get_all_trainings()  # Fetch all trainings for the form
@@ -56,6 +53,7 @@ def new_or_update_batch():
                 flash(str(e), 'error')
                 return redirect(url_for('batch.get_batches'))
         current_user = AuthService.get_current_user()
+        LogService.create_log(f"Vio el formulario de nuevo/actualizar código por el usuario {current_user.id}", f"ID de código: {batch_id}")
         return render_template('new_batch.html', batch=batch, current_user=current_user, trainings=trainings, section=1)
 
 @batch_bp.route('/<int:batch_id>', methods=['GET'])
@@ -64,6 +62,7 @@ def get_batch(batch_id):
     try:
         batch = BatchService.get_batch_by_id(batch_id)
         current_user = AuthService.get_current_user()
+        LogService.create_log(f"Vio los detalles del código {batch_id} por el usuario {current_user.id}")
         return render_template('batch_detail.html', batch=batch, trainings=batch.trainings, current_user=current_user)
     except ValueError as e:
         flash(str(e), 'error')
@@ -73,15 +72,21 @@ def get_batch(batch_id):
 @jwt_required()
 def update_batch(batch_id):
     data = request.form
-    return BatchService.update_batch(
+    result = BatchService.update_batch(
         batch_id=batch_id,
         code=data.get('code'),
         description=data.get('description'),
         trainings=data.getlist('trainings')  # Handle multiple training IDs
     )
+    current_user = AuthService.get_current_user()
+    LogService.create_log(f"Actualizó el código {batch_id} por el usuario {current_user.id}", f"Datos: {data}")
+    return result
 
 @batch_bp.route('/<int:batch_id>', methods=['POST'])
 @jwt_required()
 @role_required('admin')
 def delete_batch(batch_id):
-    return BatchService.delete_batch(batch_id)
+    result = BatchService.delete_batch(batch_id)
+    current_user = AuthService.get_current_user()
+    LogService.create_log(f"Eliminó el código {batch_id} por el usuario {current_user.id}")
+    return result
