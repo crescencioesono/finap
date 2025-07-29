@@ -25,3 +25,4 @@ class TrainingHistory(db.Model):
     # Relación con Official y Batch
     official = db.relationship('Official', back_populates='training_history', lazy=True)
     batch = db.relationship('Batch', backref='training_history', lazy=True)
+    batch_tracking = db.relationship('BatchTracking', back_populates='history', lazy=True)

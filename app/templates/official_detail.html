@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Funcionario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Debug: Check if CSS is loaded in browser Network tab -->
+</head>
+<body>
+    <div class="dashboard-container">
+        <button class="hamburger" aria-label="Toggle Menu">☰</button>
+        <main class="main-content">
+            <header class="header">
+                <div class="user-profile">
+                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
+                    <div class="user-dropdown">
+                        <p class="user-name">{{ current_user.username }}</p>
+                    </div>
+                </div>
+            </header>
+            <section class="content">
+                <h2 class="page-title">Detalles de {{ official.first_name }} {{ official.last_name }}</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="message {{ category }} alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h3 class="card-title">Información Personal</h3>
+                        <div class="detail-item">
+                            <strong>Nombre:</strong> <span class="detail-value">{{ official.first_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Apellido:</strong> <span class="detail-value">{{ official.last_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Fecha de Nacimiento:</strong> <span class="detail-value">{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else 'No especificada' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>País:</strong> <span class="detail-value">{{ official.country }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Dirección:</strong> <span class="detail-value">{{ official.address }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Teléfono:</strong> <span class="detail-value">{{ official.phone_number }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Email:</strong> <span class="detail-value">{{ official.email or 'No especificado' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Lugar de Trabajo:</strong> <span class="detail-value">{{ official.workplace }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Nivel:</strong> <span class="detail-value">{{ official.level }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Imagen:</strong> <span class="detail-value">{{ official.image or 'No disponible' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Fecha de Creación:</strong> <span class="detail-value">{{ official.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Última Actualización:</strong> <span class="detail-value">{{ official.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <h3 class="card-title">Historial de Capacitaciones</h3>
+                        {% if official.training_history %}
+                            {% for history in official.training_history %}
+                                <div class="training-card">
+                                    <h4 class="training-title">Capacitación {{ loop.index }}</h4>
+                                    <div class="detail-item">
+                                        <strong>Código:</strong> <span class="detail-value">{{ history.batch.code if history.batch else 'No asignado' }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Fecha de Finalización:</strong> <span class="detail-value">{{ history.end_date.strftime('%Y-%m-%d') }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Ciudad:</strong> <span class="detail-value">{{ history.training_city }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Modalidad:</strong> <span class="detail-value">{{ history.modality }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Duración:</strong> <span class="detail-value">{{ history.duration }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Estado:</strong> <span class="detail-value">{{ history.status }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Información Adicional:</strong> <span class="detail-value">{{ history.other_info or 'Ninguna' }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Fecha de Creación:</strong> <span class="detail-value">{{ history.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Última Actualización:</strong> <span class="detail-value">{{ history.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                    </div>
+                                    <div class="detail-card">
+                                        <h4 class="card-title">Seguimiento del Curso</h4>
+                                        {% if history.batch_tracking %}
+                                            {% for tracking in history.batch_tracking %}
+                                                <div class="tracking-item">
+                                                    <div class="detail-item">
+                                                        <strong>Curso:</strong> <span class="detail-value">{{ tracking.training.name if tracking.training else 'No asignado' }}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong>Estado:</strong> <span class="detail-value">{{ tracking.status }}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong>Fecha de Finalización:</strong> <span class="detail-value">{{ tracking.end_date.strftime('%Y-%m-%d') if tracking.end_date else 'No especificada' }}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong>Calificación:</strong> <span class="detail-value">{{ tracking.grade if tracking.grade is not none else 'No asignada' }}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong>Fecha de Creación:</strong> <span class="detail-value">{{ tracking.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong>Última Actualización:</strong> <span class="detail-value">{{ tracking.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="no-data">No hay seguimiento de cursos.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-data">No hay historial de capacitaciones.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <a href="{{ url_for('official.new_or_update_official', id=official.id) }}" class="card-link button">Modificar</a>
+                    <a href="{{ url_for('official.get_officials') }}" class="card-link button">Volver a la Lista</a>
+                    <a href="{{ url_for('official.assign_course', official_id=official.id) }}" class="card-link button">Asignar Nuevo Curso</a>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+</html>

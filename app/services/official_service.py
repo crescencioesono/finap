@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, url_for
 from app.models import db
 from app.models.official import Official
+from app.models.training_history import TrainingHistory
 
 class OfficialService:
     @staticmethod
@@ -43,9 +44,10 @@ class OfficialService:
 
     @staticmethod
     def get_official_by_id(official_id):
-        official = Official.query.get(official_id)
-        if not official:
-            raise ValueError("Oficial no encontrado")
+        from app.models import db
+        official = Official.query.options(
+            db.joinedload(Official.training_history).joinedload(TrainingHistory.batch_tracking)
+        ).get_or_404(official_id)
         return official
 
     @staticmethod

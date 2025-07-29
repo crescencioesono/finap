@@ -741,3 +741,37 @@ body::after {
         text-align: center;
     }
 }
+
+/* New or Updated Styles */
+.training-card {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.training-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #34495e;
+    font-size: 1.2rem;
+}
+
+.tracking-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    .training-card {
+        margin-bottom: 20px;
+    }
+}

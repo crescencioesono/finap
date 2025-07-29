@@ -73,20 +73,6 @@ def get_official(official_id):
         flash(str(e), 'error')
         return redirect(url_for('official.get_officials'))
 
-@official_bp.route('/<int:official_id>', methods=['PUT'])
-@jwt_required()
-def update_official(official_id):
-    data = request.form
-    return OfficialService.update_official(
-        official_id=official_id,
-        first_name=data.get('first_name'),
-        last_name=data.get('last_name'),
-        date_of_birth=data.get('date_of_birth'),
-        workplace=data.get('workplace'),
-        level=data.get('level'),
-        image=data.get('image')
-    )
-
 @official_bp.route('/<int:official_id>', methods=['DELETE'])
 @jwt_required()
 def delete_official(official_id):
