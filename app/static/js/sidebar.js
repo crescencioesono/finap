@@ -5,32 +5,39 @@ const menuConfig = {
             label: 'Funcionarios',
             submenuId: 'funcionarios-submenu',
             subItems: [
-                { label: 'Ver Funcionarios', url: '/official/' } // Hardcoded URL for now
+                { label: 'Ver Funcionarios', url: '/official/' }
             ]
         },
         {
             label: 'Cursos',
             submenuId: 'cursos-submenu',
             subItems: [
-                { label: 'Ver Cursos', url: '/training/' } // Hardcoded URL for now
+                { label: 'Ver Cursos', url: '/training/' }
             ]
         },
         {
             label: 'Códigos de cursos',
             submenuId: 'codigos-submenu',
             subItems: [
-                { label: 'Ver Códigos', url: '/batch/' } // Hardcoded URL for now
+                { label: 'Ver Códigos', url: '/batch/' }
+            ]
+        },
+        {
+            label: 'Historial de formación',
+            submenuId: 'historial-submenu',
+            subItems: [
+                { label: 'Ver Historial', url: '/training-history/' }
             ]
         },
         {
             label: 'Usuarios',
             submenuId: 'usuarios-submenu',
             subItems: [
-                { label: 'Ver Usuarios', url: '/user/' } // Hardcoded URL for now
+                { label: 'Ver Usuarios', url: '/user/' }
             ]
         }
     ],
-    logoutUrl: '/logout', // Hardcoded URL for now
+    logoutUrl: '/logout',
     logoutLabel: 'Cerrar Sesión'
 };
 
@@ -44,7 +51,7 @@ function generateSidebar() {
     const branding = document.createElement('div');
     branding.className = 'app-branding';
     const logo = document.createElement('img');
-    logo.src = '/static/images/logo.png'; // Hardcoded path for now
+    logo.src = '/static/images/logo.png';
     logo.alt = 'App Logo';
     logo.className = 'app-logo';
     branding.appendChild(logo);
@@ -56,7 +63,10 @@ function generateSidebar() {
     const menuList = document.createElement('ul');
     menuList.className = 'menu-list';
 
-    menuConfig.items.forEach(item => {
+    // Filter items based on role
+    const filteredItems = currentUserRole === 'admin' ? menuConfig.items : menuConfig.items.filter(item => item.label !== 'Usuarios');
+
+    filteredItems.forEach(item => {
         const menuItem = document.createElement('li');
         menuItem.className = 'menu-item';
         const menuButton = document.createElement('button');
@@ -120,7 +130,7 @@ function generateSidebar() {
     const menuButtons = document.querySelectorAll('.menu-button');
     menuButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default button behavior
+            e.preventDefault();
             const submenuId = button.getAttribute('data-submenu');
             const submenu = document.getElementById(submenuId);
             const isActive = submenu.classList.contains('active');

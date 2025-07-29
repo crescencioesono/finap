@@ -3,6 +3,8 @@ from app.services.batch_service import BatchService
 from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
 
+from app.utils.auth_decorators import role_required
+
 batch_bp = Blueprint('batch', __name__)
 
 @batch_bp.route('/', methods=['POST'])
@@ -80,5 +82,6 @@ def update_batch(batch_id):
 
 @batch_bp.route('/<int:batch_id>', methods=['POST'])
 @jwt_required()
+@role_required('admin')
 def delete_batch(batch_id):
     return BatchService.delete_batch(batch_id)

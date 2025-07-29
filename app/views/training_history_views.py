@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from app.services.auth_service import AuthService
 from app.services.training_history_service import TrainingHistoryService
+from app.utils.auth_decorators import role_required
 
 training_history_bp = Blueprint('training_history', __name__)
 

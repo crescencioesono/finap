@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aplicación{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <script>
+        // Inject current user role from server
+        const currentUserRole = "{{ current_user.role if current_user else 'user' }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    {% block content %}{% endblock %}
+</body>
+</html>
