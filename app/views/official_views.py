@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_jwt_extended import jwt_required
+from app.models.batch_tracking import BatchTracking
 from app.services.official_service import OfficialService
 from app.services.auth_service import AuthService
 from app.models import db
@@ -116,9 +117,8 @@ def assign_course(official_id):
                 db.session.commit()
                 flash('Curso actualizado exitosamente', 'success')
                 current_user = AuthService.get_current_user()
-                LogService.create_log(f"Actualizó el curso para el funcionario {official_id} por el usuario {current_user.id}", f"ID de código: {data.get('batch_id')}, Datos: {data}")
+                LogService.create_log(f"Actualizó el curso para el funcionario {official_id} por el usuario {current_user.id}", f"ID de lote: {data.get('batch_id')}, Datos: {data}")
             else:
-                # Create new record
                 new_training = TrainingHistory(
                     official_id=official_id,
                     batch_id=data.get('batch_id'),
@@ -130,10 +130,22 @@ def assign_course(official_id):
                     other_info=data.get('other_info')
                 )
                 db.session.add(new_training)
+                db.session.flush()  # Get the new_training.id
+                # Create BatchTracking for all trainings in the batch
+                batch = Batch.query.get(data.get('batch_id'))
+                if batch and batch.trainings:
+                    for training in batch.trainings:
+                        print(training)
+                        batch_tracking = BatchTracking(
+                            history_id=new_training.id,
+                            training_id=training.id,
+                            status='En progreso'
+                        )
+                        db.session.add(batch_tracking)
                 db.session.commit()
                 flash('Curso asignado exitosamente', 'success')
                 current_user = AuthService.get_current_user()
-                LogService.create_log(f"Asignó un curso al funcionario {official_id} por el usuario {current_user.id}", f"ID de código: {data.get('batch_id')}, Datos: {data}")
+                LogService.create_log(f"Asignó un curso al funcionario {official_id} por el usuario {current_user.id}", f"ID de lote: {data.get('batch_id')}, Datos: {data}")
             return redirect(url_for('official.get_officials'))
         else:  # GET
             batches = Batch.query.all()  # Fetch all batches for the dropdown

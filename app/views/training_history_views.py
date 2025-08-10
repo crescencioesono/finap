@@ -1,8 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, flash, redirect, request, jsonify, url_for
 from flask_jwt_extended import jwt_required
+from app.models.batch_tracking import BatchTracking
+from app.models.training_history import TrainingHistory
 from app.services.auth_service import AuthService
 from app.services.training_history_service import TrainingHistoryService
 from app.services.log_service import LogService
+from app.models import db
 
 training_history_bp = Blueprint('training_history', __name__)
 
@@ -27,3 +30,41 @@ def get_training_history_by_id(history_id):
     except ValueError as e:
         LogService.create_log(f"Intento fallido de ver el historial {history_id} por el usuario {current_user.id}", f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 404
+    
+@training_history_bp.route('/<int:history_id>/batch_tracking/<int:tracking_id>', methods=['POST'])
+@jwt_required()
+def update_batch_tracking(history_id, tracking_id):
+    current_user = AuthService.get_current_user()
+    tracking = BatchTracking.query.get_or_404(tracking_id)
+    if tracking.history_id != history_id:
+        LogService.create_log(f"Intento no autorizado de actualizar el seguimiento {tracking_id} por el usuario {current_user.id}", f"History ID mismatch: {history_id}")
+        return jsonify({'error': 'Tracking does not belong to this history'}), 403
+
+    data = request.form
+    tracking.status = data.get('status', tracking.status)
+    tracking.end_date = data.get('end_date') if data.get('end_date') else tracking.end_date
+    tracking.grade = data.get('grade') if data.get('grade') else tracking.grade
+
+    db.session.commit()
+    LogService.create_log(f"Actualizó el seguimiento {tracking_id} por el usuario {current_user.id}", f"Status: {tracking.status}, End Date: {tracking.end_date}, Grade: {tracking.grade}")
+
+    # Redirect to the official detail page to refresh the view
+    history = TrainingHistory.query.get(history_id)
+    official_id = history.official_id
+    flash('Seguimiento actualizado exitosamente', 'success')
+    return redirect(url_for('official.get_official', official_id=official_id))
+
+# # Add to_dict method to BatchTracking if not present
+def batch_tracking_to_dict(self):
+    return {
+        'id': self.id,
+        'history_id': self.history_id,
+        'training_id': self.training_id,
+        'status': self.status,
+        'end_date': self.end_date.strftime('%Y-%m-%d') if self.end_date else None,
+        'grade': self.grade,
+        'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+BatchTracking.to_dict = batch_tracking_to_dict

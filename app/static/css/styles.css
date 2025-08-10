@@ -775,3 +775,21 @@ body::after {
         margin-bottom: 20px;
     }
 }
+
+.edit-form {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    display: none;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 5px;
+}

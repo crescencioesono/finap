@@ -41,9 +41,6 @@
                             <strong>Fecha de Nacimiento:</strong> <span class="detail-value">{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else 'No especificada' }}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Género:</strong> <span class="detail-value">{{ official.gender }}</span>
-                        </div>
-                        <div class="detail-item">
                             <strong>País:</strong> <span class="detail-value">{{ official.country }}</span>
                         </div>
                         <div class="detail-item">
@@ -56,7 +53,7 @@
                             <strong>Email:</strong> <span class="detail-value">{{ official.email or 'No especificado' }}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Ministerio:</strong> <span class="detail-value">{{ official.workplace }}</span>
+                            <strong>Lugar de Trabajo:</strong> <span class="detail-value">{{ official.workplace }}</span>
                         </div>
                         <div class="detail-item">
                             <strong>Nivel:</strong> <span class="detail-value">{{ official.level }}</span>
@@ -104,6 +101,66 @@
                                     <div class="detail-item">
                                         <strong>Última Actualización:</strong> <span class="detail-value">{{ history.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                                     </div>
+                                    <div class="detail-card">
+                                        <h4 class="card-title">Seguimiento del Curso</h4>
+                                        {% if history.batch_tracking %}
+                                            {% for tracking in history.batch_tracking %}
+                                                <div class="tracking-item" data-tracking-id="{{ tracking.id }}">
+                                                    <div class="form-group">
+                                                        <button class="toggle-details" data-tracking-id="{{ tracking.id }}">{{ tracking.training.name if tracking.training else 'No asignado' }}</button>
+                                                    </div>
+                                                    <div class="tracking-details" data-tracking-id="{{ tracking.id }}" style="display: none;">
+                                                        <div class="form-group">
+                                                            <button class="edit-tracking" data-tracking-id="{{ tracking.id }}">Editar</button>
+                                                        </div>
+                                                        <div class="edit-form" data-tracking-id="{{ tracking.id }}" style="display: none;">
+                                                            <form method="POST" action="{{ url_for('training_history.update_batch_tracking', history_id=history.id, tracking_id=tracking.id) }}">
+                                                                <input type="hidden" name="csrf_token">
+                                                                <div class="form-group">
+                                                                    <label for="status_{{ tracking.id }}">Estado:</label>
+                                                                    <select name="status" id="status_{{ tracking.id }}" required>
+                                                                        <option value="En progreso" {% if tracking.status == 'En progreso' %}selected{% endif %}>En progreso</option>
+                                                                        <option value="Incompleto" {% if tracking.status == 'Incompleto' %}selected{% endif %}>Incompleto</option>
+                                                                        <option value="Completo" {% if tracking.status == 'Completo' %}selected{% endif %}>Completo</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="end_date_{{ tracking.id }}">Fecha de Finalización:</label>
+                                                                    <input type="date" name="end_date" id="end_date_{{ tracking.id }}" value="{{ tracking.end_date.strftime('%Y-%m-%d') if tracking.end_date else '' }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="grade_{{ tracking.id }}">Calificación:</label>
+                                                                    <input type="number" name="grade" id="grade_{{ tracking.id }}" min="0" max="100" value="{{ tracking.grade if tracking.grade is not none else '' }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button type="submit">Guardar</button>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button type="button" class="cancel-edit" data-tracking-id="{{ tracking.id }}">Cancelar</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="view-details" data-tracking-id="{{ tracking.id }}">
+                                                            <div class="detail-item">
+                                                                <strong>Curso:</strong> <span class="detail-value">{{ tracking.training.name if tracking.training else 'No asignado' }}</span>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <strong>Estado:</strong> <span class="detail-value">{{ tracking.status }}</span>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <strong>Fecha de Finalización:</strong> <span class="detail-value">{{ tracking.end_date.strftime('%Y-%m-%d') if tracking.end_date else 'No especificada' }}</span>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <strong>Calificación:</strong> <span class="detail-value">{{ tracking.grade if tracking.grade is not none else 'No asignada' }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="no-data">No hay seguimiento de cursos.</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         {% else %}
@@ -120,5 +177,52 @@
         </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggles = document.querySelectorAll('.toggle-details');
+            const editButtons = document.querySelectorAll('.edit-tracking');
+            const cancelButtons = document.querySelectorAll('.cancel-edit');
+            let openTrackingId = null;
+    
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const trackingId = toggle.getAttribute('data-tracking-id');
+                    const details = document.querySelector(`.tracking-details[data-tracking-id="${trackingId}"]`);
+    
+                    if (openTrackingId && openTrackingId !== trackingId) {
+                        const prevDetails = document.querySelector(`.tracking-details[data-tracking-id="${openTrackingId}"]`);
+                        if (prevDetails) prevDetails.style.display = 'none';
+                    }
+    
+                    details.style.display = details.style.display === 'block' ? 'none' : 'block';
+                    openTrackingId = details.style.display === 'block' ? trackingId : null;
+                });
+            });
+    
+            editButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const trackingId = button.getAttribute('data-tracking-id');
+                    const editForm = document.querySelector(`.edit-form[data-tracking-id="${trackingId}"]`);
+                    const viewDetails = document.querySelector(`.view-details[data-tracking-id="${trackingId}"]`);
+                    if (editForm) {
+                        editForm.style.display = 'block';
+                        viewDetails.style.display = 'none';
+                    }
+                });
+            });
+    
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const trackingId = button.getAttribute('data-tracking-id');
+                    const editForm = document.querySelector(`.edit-form[data-tracking-id="${trackingId}"]`);
+                    const viewDetails = document.querySelector(`.view-details[data-tracking-id="${trackingId}"]`);
+                    if (editForm) {
+                        editForm.style.display = 'none';
+                        viewDetails.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
