@@ -1,106 +1,131 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registros de Logs</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Debug: Check if CSS is loaded in browser Network tab -->
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
-                </div>
-            </header>
-            <section class="content">
-                <h2 class="page-title">Registros de Logs</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <div class="table-controls">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
-                </div>
-                <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Acción</th>
-                            <th>Fecha y Hora</th>
-                            <th>Detalles</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody">
-                        {% for log in logs %}
-                            <tr>
-                                <td>{{ log.user.username if log.user else 'Desconocido' }}</td>
-                                <td>{{ log.action }}</td>
-                                <td>{{ log.log_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                                <td>{{ log.details|safe }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% if pagination.pages > 1 %}
-                    <div class="pagination">
-                        {% if pagination.has_prev %}
-                            <a href="{{ url_for('log.get_logs', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
-                        {% else %}
-                            <span class="pagination-link disabled">Anterior</span>
-                        {% endif %}
-                        {% for num in pagination.iter_pages() %}
-                            {% if num %}
-                                {% if num == pagination.page %}
-                                    <span class="pagination-link active">{{ num }}</span>
-                                {% else %}
-                                    <a href="{{ url_for('log.get_logs', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
-                                {% endif %}
-                            {% else %}
-                                <span class="pagination-link">...</span>
-                            {% endif %}
-                        {% endfor %}
-                        {% if pagination.has_next %}
-                            <a href="{{ url_for('log.get_logs', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
-                        {% else %}
-                            <span class="pagination-link disabled">Siguiente</span>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </section>
-        </main>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2 class="page-title">Registros de Logs</h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }} alert">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <div class="table-controls">
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Buscar..."
+              value="{{ request.args.get('search', '') }}"
+            />
+          </div>
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Fecha y Hora</th>
+                <th>Detalles</th>
+              </tr>
+            </thead>
+            <tbody id="logTableBody">
+              {% for log in logs %}
+              <tr>
+                <td>{{ log.user.username if log.user else 'Desconocido' }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.log_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ log.details|safe }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if pagination.pages > 1 %}
+          <div class="pagination">
+            {% if pagination.has_prev %}
+            <a
+              href="{{ url_for('log.get_logs', page=pagination.prev_num, search=request.args.get('search', '')) }}"
+              class="pagination-link"
+              >Anterior</a
+            >
+            {% else %}
+            <span class="pagination-link disabled">Anterior</span>
+            {% endif %} {% for num in pagination.iter_pages() %} {% if num %} {%
+            if num == pagination.page %}
+            <span class="pagination-link active">{{ num }}</span>
+            {% else %}
+            <a
+              href="{{ url_for('log.get_logs', page=num, search=request.args.get('search', '')) }}"
+              class="pagination-link"
+              >{{ num }}</a
+            >
+            {% endif %} {% else %}
+            <span class="pagination-link">...</span>
+            {% endif %} {% endfor %} {% if pagination.has_next %}
+            <a
+              href="{{ url_for('log.get_logs', page=pagination.next_num, search=request.args.get('search', '')) }}"
+              class="pagination-link"
+              >Siguiente</a
+            >
+            {% else %}
+            <span class="pagination-link disabled">Siguiente</span>
+            {% endif %}
+          </div>
+          {% endif %}
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('logTableBody');
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const tableBody = document.getElementById("logTableBody");
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = tableBody.getElementsByTagName('tr');
+        searchInput.addEventListener("input", function () {
+          const searchTerm = this.value.toLowerCase();
+          const rows = tableBody.getElementsByTagName("tr");
 
-                for (let row of rows) {
-                    let text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
-                }
-            });
-
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    window.location.href = "{{ url_for('log.get_logs', page=pagination.page, search='') }}".replace('search=', 'search=' + encodeURIComponent(this.value));
-                }
-            });
+          for (let row of rows) {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? "" : "none";
+          }
         });
+
+        searchInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            window.location.href =
+              "{{ url_for('log.get_logs', page=pagination.page, search='') }}".replace(
+                "search=",
+                "search=" + encodeURIComponent(this.value)
+              );
+          }
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

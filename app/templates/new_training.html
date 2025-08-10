@@ -1,108 +1,158 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if training %}Modificar Curso{% else %}Registrar Nuevo Curso{% endif %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% if training %}Modificar Curso{% else %}Registrar Nuevo Curso{% endif %}
+    </title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2>
+            {% if training %}Modificar Curso{% else %}Registrar Nuevo Curso{%
+            endif %}
+          </h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <form
+            method="POST"
+            action="{{ url_for('training.new_or_update_training', id=training.id if training else '') }}"
+            id="trainingForm"
+          >
+            <input
+              type="hidden"
+              name="training_id"
+              value="{{ training.id if training else '' }}"
+            />
+            <!-- CSRF Token será obtenido de la cookie por JavaScript -->
+            <input type="hidden" name="csrf_token" id="csrf_token" value="" />
+            <div class="form-sections">
+              <div class="form-section" data-section="1">
+                <h3>Información del curso</h3>
+                <div class="form-group">
+                  <label for="name">Nombre:</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ training.name if training else '' }}"
+                    required
+                  />
                 </div>
-            </header>
-            <section class="content">
-                <h2>{% if training %}Modificar Curso{% else %}Registrar Nuevo Curso{% endif %}</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <form method="POST" action="{{ url_for('training.new_or_update_training', id=training.id if training else '') }}" id="trainingForm">
-                    <input type="hidden" name="training_id" value="{{ training.id if training else '' }}">
-                    <!-- CSRF Token será obtenido de la cookie por JavaScript -->
-                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
-                    <div class="form-sections">
-                        <div class="form-section" data-section="1">
-                            <h3>Información del curso</h3>
-                            <div class="form-group">
-                                <label for="name">Nombre:</label>
-                                <input type="text" id="name" name="name" value="{{ training.name if training else '' }}" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="navigation-buttons">
-                        <button type="button" class="card-link" id="prevBtn" style="display: none;">Anterior</button>
-                        <button type="button" class="card-link" id="nextBtn">Siguiente</button>
-                        <button type="submit" class="card-link" id="saveBtn" style="display: none;">Guardar</button>
-                    </div>
-                </form>
-            </section>
-        </main>
+              </div>
+            </div>
+            <div class="navigation-buttons">
+              <button
+                type="button"
+                class="card-link"
+                id="prevBtn"
+                style="display: none"
+              >
+                Anterior
+              </button>
+              <button type="button" class="card-link" id="nextBtn">
+                Siguiente
+              </button>
+              <button
+                type="submit"
+                class="card-link"
+                id="saveBtn"
+                style="display: none"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.form-section');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const csrfTokenInput = document.getElementById('csrf_token');
-            const form = document.getElementById('trainingForm');
-            let currentSection = 1;
+      document.addEventListener("DOMContentLoaded", function () {
+        const sections = document.querySelectorAll(".form-section");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const saveBtn = document.getElementById("saveBtn");
+        const csrfTokenInput = document.getElementById("csrf_token");
+        const form = document.getElementById("trainingForm");
+        let currentSection = 1;
 
-            // Función para obtener cookie por nombre
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-                return null;
-            }
+        // Función para obtener cookie por nombre
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(";").shift();
+          return null;
+        }
 
-            // Obtener CSRF token directamente de las cookies
-            function loadCSRFToken() {
-                const csrfToken = getCookie('csrf_access_token');
-                if (csrfToken) {
-                    csrfTokenInput.value = csrfToken;
-                    console.log('CSRF token loaded from cookie:', csrfToken);
-                    return true;
+        // Obtener CSRF token directamente de las cookies
+        function loadCSRFToken() {
+          const csrfToken = getCookie("csrf_access_token");
+          if (csrfToken) {
+            csrfTokenInput.value = csrfToken;
+            console.log("CSRF token loaded from cookie:", csrfToken);
+            return true;
+          } else {
+            console.error("CSRF token not found in cookies");
+            // Como fallback, intentar obtenerlo del servidor
+            fetch("/get-csrf-token", {
+              method: "GET",
+              credentials: "include",
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.csrf_token) {
+                  csrfTokenInput.value = data.csrf_token;
+                  console.log(
+                    "CSRF token fetched from server:",
+                    data.csrf_token
+                  );
                 } else {
-                    console.error('CSRF token not found in cookies');
-                    // Como fallback, intentar obtenerlo del servidor
-                    fetch('/get-csrf-token', {
-                        method: 'GET',
-                        credentials: 'include'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.csrf_token) {
-                            csrfTokenInput.value = data.csrf_token;
-                            console.log('CSRF token fetched from server:', data.csrf_token);
-                        } else {
-                            console.error('Could not get CSRF token:', data.error || 'Unknown error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching CSRF token:', error);
-                    });
-                    return false;
+                  console.error(
+                    "Could not get CSRF token:",
+                    data.error || "Unknown error"
+                  );
                 }
-            }
+              })
+              .catch((error) => {
+                console.error("Error fetching CSRF token:", error);
+              });
+            return false;
+          }
+        }
 
-            // Cargar el token CSRF al inicializar
-            loadCSRFToken();
+        // Cargar el token CSRF al inicializar
+        loadCSRFToken();
 
-            // Verificar token CSRF antes del envío del formulario
-            /*form.addEventListener('submit', function(e) {
+        // Verificar token CSRF antes del envío del formulario
+        /*form.addEventListener('submit', function(e) {
                 if (!csrfTokenInput.value) {
                     e.preventDefault();
                     console.error('Form submission blocked: No CSRF token');
@@ -112,33 +162,37 @@
                 console.log('Form submitted with CSRF token:', csrfTokenInput.value);
             });*/
 
-            function showSection(sectionNum) {
-                sections.forEach(section => section.classList.remove('active'));
-                const activeSection = document.querySelector(`.form-section[data-section="${sectionNum}"]`);
-                if (activeSection) {
-                    activeSection.classList.add('active');
-                    currentSection = sectionNum;
-                    prevBtn.style.display = sectionNum > 1 ? 'inline-flex' : 'none';
-                    nextBtn.style.display = sectionNum < sections.length ? 'inline-flex' : 'none';
-                    saveBtn.style.display = sectionNum === sections.length ? 'inline-flex' : 'none';
-                }
-            }
+        function showSection(sectionNum) {
+          sections.forEach((section) => section.classList.remove("active"));
+          const activeSection = document.querySelector(
+            `.form-section[data-section="${sectionNum}"]`
+          );
+          if (activeSection) {
+            activeSection.classList.add("active");
+            currentSection = sectionNum;
+            prevBtn.style.display = sectionNum > 1 ? "inline-flex" : "none";
+            nextBtn.style.display =
+              sectionNum < sections.length ? "inline-flex" : "none";
+            saveBtn.style.display =
+              sectionNum === sections.length ? "inline-flex" : "none";
+          }
+        }
 
-            prevBtn.addEventListener('click', () => {
-                if (currentSection > 1) {
-                    showSection(currentSection - 1);
-                }
-            });
-
-            nextBtn.addEventListener('click', () => {
-                if (currentSection < sections.length) {
-                    showSection(currentSection + 1);
-                }
-            });
-
-            // Initialize with section 1
-            showSection(1);
+        prevBtn.addEventListener("click", () => {
+          if (currentSection > 1) {
+            showSection(currentSection - 1);
+          }
         });
+
+        nextBtn.addEventListener("click", () => {
+          if (currentSection < sections.length) {
+            showSection(currentSection + 1);
+          }
+        });
+
+        // Initialize with section 1
+        showSection(1);
+      });
     </script>
-</body>
+  </body>
 </html>

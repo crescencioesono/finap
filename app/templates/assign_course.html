@@ -1,99 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Asignar Curso</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Debug: Check if CSS is loaded in browser Network tab -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
     <style>
-        .form-section, .form-group {
-            display: block !important;
-            visibility: visible !important;
-        }
+      .form-section,
+      .form-group {
+        display: block !important;
+        visibility: visible !important;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
-                </div>
-            </header>
-            <section class="content">
-                <h2 class="page-title">Asignar Curso a {{ official.first_name }} {{ official.last_name }}</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <form method="POST" action="{{ url_for('official.assign_course', official_id=official.id) }}" id="assignCourseForm">
-                    <!-- CSRF Token será obtenido de la cookie por JavaScript -->
-                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
-                    <div class="form-section">
-                        <h3>Detalles del Curso</h3>
-                        <div class="form-group">
-                            <label for="batch_id">Código del Curso:</label>
-                            <select id="batch_id" name="batch_id" required>
-                                <option value="">Seleccione un código</option>
-                                {% if batches %}
-                                    {% for batch in batches %}
-                                        <option value="{{ batch.id }}">{{ batch.code }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="" disabled>No hay cursos disponibles</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="end_date">Fecha de Finalización:</label>
-                            <input type="date" id="end_date" name="end_date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="training_city">Ciudad:</label>
-                            <input type="text" id="training_city" name="training_city" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="modality">Modalidad:</label>
-                            <select id="modality" name="modality" required>
-                                <option value="">Seleccione una modalidad</option>
-                                <option value="Presencial">Presencial</option>
-                                <option value="Online">Online</option>
-                                <option value="USB">USB</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="duration">Duración:</label>
-                            <input type="text" id="duration" name="duration" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Estado:</label>
-                            <select id="status" name="status" required>
-                                <option value="En progreso">En progreso</option>
-                                <option value="Incompleto">Incompleto</option>
-                                <option value="Completo">Completo</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="other_info">Información Adicional:</label>
-                            <textarea id="other_info" name="other_info"></textarea>
-                        </div>
-                    </div>
-                    <div class="navigation-buttons">
-                        <button type="submit" class="card-link button">Asignar Curso</button>
-                        <a href="{{ url_for('official.get_officials') }}" class="card-link button">Cancelar</a>
-                    </div>
-                </form>
-            </section>
-        </main>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2 class="page-title">
+            Asignar Curso a {{ official.first_name }} {{ official.last_name }}
+          </h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }} alert">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <form
+            method="POST"
+            action="{{ url_for('official.assign_course', official_id=official.id) }}"
+            id="assignCourseForm"
+          >
+            <!-- CSRF Token será obtenido de la cookie por JavaScript -->
+            <input type="hidden" name="csrf_token" id="csrf_token" value="" />
+            <div class="form-section">
+              <h3>Detalles del Curso</h3>
+              <div class="form-group">
+                <label for="batch_id">Código del Curso:</label>
+                <select id="batch_id" name="batch_id" required>
+                  <option value="">Seleccione un código</option>
+                  {% if batches %} {% for batch in batches %}
+                  <option value="{{ batch.id }}">{{ batch.code }}</option>
+                  {% endfor %} {% else %}
+                  <option value="" disabled>No hay cursos disponibles</option>
+                  {% endif %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="end_date">Fecha de Finalización:</label>
+                <input type="date" id="end_date" name="end_date" required />
+              </div>
+              <div class="form-group">
+                <label for="training_city">Ciudad:</label>
+                <input
+                  type="text"
+                  id="training_city"
+                  name="training_city"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="modality">Modalidad:</label>
+                <select id="modality" name="modality" required>
+                  <option value="">Seleccione una modalidad</option>
+                  <option value="Presencial">Presencial</option>
+                  <option value="Online">Online</option>
+                  <option value="USB">USB</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="duration">Duración:</label>
+                <input type="text" id="duration" name="duration" required />
+              </div>
+              <div class="form-group">
+                <label for="status">Estado:</label>
+                <select id="status" name="status" required>
+                  <option value="En progreso">En progreso</option>
+                  <option value="Incompleto">Incompleto</option>
+                  <option value="Completo">Completo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="other_info">Información Adicional:</label>
+                <textarea id="other_info" name="other_info"></textarea>
+              </div>
+            </div>
+            <div class="navigation-buttons">
+              <button type="submit" class="card-link button">
+                Asignar Curso
+              </button>
+              <a
+                href="{{ url_for('official.get_officials') }}"
+                class="card-link button"
+                >Cancelar</a
+              >
+            </div>
+          </form>
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-</body>
+  </body>
 </html>

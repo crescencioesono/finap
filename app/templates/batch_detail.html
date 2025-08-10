@@ -1,69 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detalles del Código</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Debug: Check if CSS is loaded in browser Network tab -->
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
-                </div>
-            </header>
-            <section class="content">
-                <h2 class="page-title">Detalles del Código</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <div class="detail-grid">
-                    <div class="detail-card">
-                        <h3 class="card-title">Información del Código</h3>
-                        <div class="detail-item">
-                            <strong>Código:</strong> <span class="detail-value">{{ batch.code }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Descripción:</strong> <span class="detail-value">{{ batch.description or 'Sin descripción' }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Fecha de Creación:</strong> <span class="detail-value">{{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Última Actualización:</strong> <span class="detail-value">{{ batch.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-                        </div>
-                    </div>
-                    <div class="detail-card">
-                        <h3 class="card-title">Cursos Asociados</h3>
-                        {% if trainings %}
-                            <ul class="course-list">
-                                {% for training in trainings %}
-                                    <li class="course-item">{{ training.name }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="no-data">No hay cursos asociados.</p>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <a href="{{ url_for('batch.new_or_update_batch', id=batch.id) }}" class="card-link button">Modificar</a>
-                    <a href="{{ url_for('batch.get_batches') }}" class="card-link button">Volver a la Lista</a>
-                </div>
-            </section>
-        </main>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2 class="page-title">Detalles del Código</h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }} alert">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <div class="detail-grid">
+            <div class="detail-card">
+              <h3 class="card-title">Información del Código</h3>
+              <div class="detail-item">
+                <strong>Código:</strong>
+                <span class="detail-value">{{ batch.code }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Descripción:</strong>
+                <span class="detail-value"
+                  >{{ batch.description or 'Sin descripción' }}</span
+                >
+              </div>
+              <div class="detail-item">
+                <strong>Fecha de Creación:</strong>
+                <span class="detail-value"
+                  >{{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span
+                >
+              </div>
+              <div class="detail-item">
+                <strong>Última Actualización:</strong>
+                <span class="detail-value"
+                  >{{ batch.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</span
+                >
+              </div>
+            </div>
+            <div class="detail-card">
+              <h3 class="card-title">Cursos Asociados</h3>
+              {% if trainings %}
+              <ul class="course-list">
+                {% for training in trainings %}
+                <li class="course-item">{{ training.name }}</li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p class="no-data">No hay cursos asociados.</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="action-buttons">
+            <a
+              href="{{ url_for('batch.new_or_update_batch', id=batch.id) }}"
+              class="card-link button"
+              >Modificar</a
+            >
+            <a
+              href="{{ url_for('batch.get_batches') }}"
+              class="card-link button"
+              >Volver a la Lista</a
+            >
+          </div>
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-</body>
+  </body>
 </html>

@@ -10,6 +10,11 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
   </head>
   <body>
     <div class="dashboard-container">
@@ -79,9 +84,18 @@
                         type="checkbox"
                         name="trainings"
                         value="{{ training.id }}"
-                        {% if batch and training.id in batch.training_ids %}
+                        {%
+                        if
+                        batch
+                        and
+                        training.id
+                        in
+                        batch.training_ids
+                        %}
                         checked
-                        {% endif %}
+                        {%
+                        endif
+                        %}
                       />
                       {{ training.name }}
                     </label>
