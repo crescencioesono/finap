@@ -1,48 +1,58 @@
-from flask import render_template
+from flask import flash, render_template
 from app.models import db
+from app.models.batch import Batch
 from app.models.official import Official
 from app.models.training_history import TrainingHistory
 
 class TrainingHistoryService:
     @staticmethod
-    def create_training_history(official_id, training_id, training_date, training_city, modality, duration, state, other_info=None):
-        new_training_history = TrainingHistory(
-            official_id=official_id,
-            training_id=training_id,
-            training_date=training_date,
-            training_city=training_city,
-            modality=modality,
-            duration=duration,
-            state=state,
-            other_info=other_info
-        )
-        db.session.add(new_training_history)
-        db.session.commit()
-        return new_training_history
-    
-    @staticmethod
-    def get_all_training_history(current_user=None, page=1, search_query=None):
-        per_page = 10
-        query = TrainingHistory.query.join(Official).options(
-            db.joinedload(TrainingHistory.official),
-            db.joinedload(TrainingHistory.batch)
-        )
+    def get_all_training_history(current_user, page=1, search_query=None, training_code=None, all_officials=False):
+        per_page = 10  # Adjust as needed
+        query = TrainingHistory.query.join(Official).join(Batch)
+        
+        # Apply filters
+        if training_code:
+            query = query.filter(Batch.code == training_code)
+        elif not all_officials:
+            query = query.filter(Official.id == current_user.id)
+
+        # Apply search
         if search_query:
-            search = f"%{search_query}%"
+            search_pattern = f'%{search_query}%'
             query = query.filter(
-                (Official.first_name.ilike(search)) |
-                (Official.last_name.ilike(search)) |
-                (TrainingHistory.training_city.ilike(search)) |
-                (TrainingHistory.modality.ilike(search)) |
-                (TrainingHistory.duration.ilike(search)) |
-                (TrainingHistory.status.ilike(search))
+                (Official.first_name.ilike(search_pattern)) |
+                (Official.last_name.ilike(search_pattern)) |
+                (Batch.code.ilike(search_pattern))
             )
+
+        # Paginate results
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
-        return render_template('training_history.html', training_history=pagination.items, pagination=pagination, current_user=current_user)
+        histories = pagination.items
+
+        if not histories:
+            flash('No se encontraron registros de historial de formación.', 'info')
+
+        # Prepare data for template
+        history_data = [
+            {
+                'official_name': f"{history.official.first_name} {history.official.last_name}",
+                'training_code': history.batch.code if history.batch else 'No asignado',
+                'end_date': history.end_date.strftime('%Y-%m-%d') if history.end_date else '',
+                'training_city': history.training_city if history.training_city else '',
+                'modality': history.modality if history.modality else '',
+                'duration': history.duration if history.duration else '',
+                'status': history.status if history.status else ''
+            } for history in histories
+        ]
+
+        return render_template('training_history.html', training_history=history_data, pagination=pagination, current_user=current_user)
     
     @staticmethod
     def get_training_history_by_id(history_id):
-        return TrainingHistory.query.get(history_id)
+        history = TrainingHistory.query.get_or_404(history_id)
+        if not history:
+            raise ValueError("Historial de formación no encontrado")
+        return history
 
     @staticmethod
     def get_training_history_by_official(official_id):

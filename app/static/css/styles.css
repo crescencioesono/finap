@@ -115,7 +115,8 @@ input[type="password"]:focus {
     background-color: #fff;
 }
 
-select, textarea {
+select,
+textarea {
     width: 100%;
     overflow-y: auto;
     border: 1px solid #ddd;
@@ -398,7 +399,8 @@ button:focus {
 
 .card-link {
     display: inline-block;
-    padding: 0.5rem 1rem;
+    padding: 0.8rem 1rem;
+    margin-right: 5px;
     background-color: var(--primary);
     color: var(--background-container);
     text-decoration: none;
@@ -771,6 +773,7 @@ body::after {
     .detail-grid {
         grid-template-columns: 1fr;
     }
+
     .training-card {
         margin-bottom: 20px;
     }
@@ -782,14 +785,80 @@ body::after {
     border: 1px solid #ddd;
     display: none;
 }
+
 .form-group {
     margin-bottom: 15px;
 }
+
 .form-group label {
     display: block;
     margin-bottom: 5px;
 }
-.form-group input, .form-group select {
+
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 5px;
+}
+
+/* Print-specific styles */
+.print-only {
+    display: none;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+    }
+
+    table.official-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    th,
+    td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+        text-align: left !important;
+    }
+
+    th {
+        background-color: #f2f2f2 !important;
+    }
+
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        padding: 0 !important;
+        /* Remove padding for cleaner print */
+    }
+}
+
+.print-button {
+    display: inline-block;
+    padding: 0.8rem 1rem;
+    margin-left: 5px;
+    background-color: var(--primary);
+    color: var(--background-container);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.print-button:hover {
+    background-color: var(--primary-dark);
 }

@@ -29,7 +29,7 @@
                     {% endif %}
                 {% endwith %}
                 <div class="table-controls">
-                    <a href="{{ url_for('official.new_or_update_official') }}" class="card-link">Agregar Nuevo</a>
+                    <a href="{{ url_for('official.new_or_update_official') }}" class="card-link">Nuevo</a>
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
                 </div>
                 <table class="official-table">

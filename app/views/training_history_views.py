@@ -14,9 +14,17 @@ training_history_bp = Blueprint('training_history', __name__)
 def get_training_history():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
+    training_code = request.args.get('training_code')
+    all_officials = request.args.get('all_officials', 'false').lower() == 'true'
     current_user = AuthService.get_current_user()
-    result = TrainingHistoryService.get_all_training_history(current_user=current_user, page=page, search_query=search_query)
-    LogService.create_log(f"Vio el historial de formación por el usuario {current_user.id}", f"Página: {page}, Búsqueda: {search_query}")
+    result = TrainingHistoryService.get_all_training_history(
+        current_user=current_user,
+        page=page,
+        search_query=search_query,
+        training_code=training_code,
+        all_officials=all_officials
+    )
+    LogService.create_log(f"Vio el historial de formación por el usuario {current_user.id}", f"Página: {page}, Búsqueda: {search_query}, Training Code: {training_code}, All Officials: {all_officials}")
     return result
 
 @training_history_bp.route('/<int:history_id>', methods=['GET'])
@@ -54,17 +62,19 @@ def update_batch_tracking(history_id, tracking_id):
     flash('Seguimiento actualizado exitosamente', 'success')
     return redirect(url_for('official.get_official', official_id=official_id))
 
-# # Add to_dict method to BatchTracking if not present
-def batch_tracking_to_dict(self):
-    return {
-        'id': self.id,
-        'history_id': self.history_id,
-        'training_id': self.training_id,
-        'status': self.status,
-        'end_date': self.end_date.strftime('%Y-%m-%d') if self.end_date else None,
-        'grade': self.grade,
-        'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-        'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S')
-    }
-
-BatchTracking.to_dict = batch_tracking_to_dict
+@training_history_bp.route('/print', methods=['GET'])
+@jwt_required()
+def print_training_history():
+    search_query = request.args.get('search', None, type=str)
+    training_code = request.args.get('training_code')
+    all_officials = request.args.get('all_officials', 'false').lower() == 'true'
+    current_user = AuthService.get_current_user()
+    result = TrainingHistoryService.get_all_training_history(
+        current_user=current_user,
+        page=1,  # Not paginated for print
+        search_query=search_query,
+        training_code=training_code,
+        all_officials=all_officials
+    )
+    LogService.create_log(f"Imprimiendo historial de formación por el usuario {current_user.id}", f"Búsqueda: {search_query}, Training Code: {training_code}, All Officials: {all_officials}")
+    return result

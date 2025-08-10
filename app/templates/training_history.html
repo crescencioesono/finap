@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Capacitaciones</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Debug: Check if CSS is loaded in browser Network tab -->
 </head>
 <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
         <main class="main-content">
-            <header class="header">
+            <header class="header no-print">
                 <div class="user-profile">
                     <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
                     <div class="user-dropdown">
@@ -20,16 +18,17 @@
                 </div>
             </header>
             <section class="content">
-                <h2 class="page-title">Historial de Capacitaciones</h2>
+                <h2 class="page-title no-print">Historial de Capacitaciones</h2>
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
+                            <div class="message {{ category }} alert no-print">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                <div class="table-controls">
+                <div class="table-controls no-print">
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar..." value="{{ request.args.get('search', '') }}">
+                    <a href="{{ url_for('training_history.print_training_history', search=request.args.get('search', ''), training_code=request.args.get('training_code'), all_officials=request.args.get('all_officials', 'false')) }}" class="print-button" onclick="window.print(); return false;">Imprimir</a>
                 </div>
                 <table class="official-table">
                     <thead>
@@ -47,10 +46,10 @@
                     <tbody id="trainingTableBody">
                         {% for history in training_history %}
                             <tr>
-                                <td>{{ history.official.first_name }}</td>
-                                <td>{{ history.official.last_name }}</td>
-                                <td>{{ history.batch.code if history.batch else 'No asignado' }}</td>
-                                <td>{{ history.end_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ history.official_name.split()[0] if history.official_name.split() else '' }}</td>
+                                <td>{{ history.official_name.split()[1] if history.official_name.split()[1:] else '' }}</td>
+                                <td>{{ history.training_code }}</td>
+                                <td>{{ history.end_date }}</td>
                                 <td>{{ history.training_city }}</td>
                                 <td>{{ history.modality }}</td>
                                 <td>{{ history.duration }}</td>
@@ -59,10 +58,10 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                {% if pagination.pages > 1 %}
-                    <div class="pagination">
+                {% if pagination and pagination.pages > 1 %}
+                    <div class="pagination no-print">
                         {% if pagination.has_prev %}
-                            <a href="{{ url_for('training_history.get_training_history', page=pagination.prev_num, search=request.args.get('search', '')) }}" class="pagination-link">Anterior</a>
+                            <a href="{{ url_for('training_history.get_training_history', page=pagination.prev_num, search=request.args.get('search', ''), training_code=request.args.get('training_code'), all_officials=request.args.get('all_officials', 'false')) }}" class="pagination-link">Anterior</a>
                         {% else %}
                             <span class="pagination-link disabled">Anterior</span>
                         {% endif %}
@@ -71,14 +70,14 @@
                                 {% if num == pagination.page %}
                                     <span class="pagination-link active">{{ num }}</span>
                                 {% else %}
-                                    <a href="{{ url_for('training_history.get_training_history', page=num, search=request.args.get('search', '')) }}" class="pagination-link">{{ num }}</a>
+                                    <a href="{{ url_for('training_history.get_training_history', page=num, search=request.args.get('search', ''), training_code=request.args.get('training_code'), all_officials=request.args.get('all_officials', 'false')) }}" class="pagination-link">{{ num }}</a>
                                 {% endif %}
                             {% else %}
                                 <span class="pagination-link">...</span>
                             {% endif %}
                         {% endfor %}
                         {% if pagination.has_next %}
-                            <a href="{{ url_for('training_history.get_training_history', page=pagination.next_num, search=request.args.get('search', '')) }}" class="pagination-link">Siguiente</a>
+                            <a href="{{ url_for('training_history.get_training_history', page=pagination.next_num, search=request.args.get('search', ''), training_code=request.args.get('training_code'), all_officials=request.args.get('all_officials', 'false')) }}" class="pagination-link">Siguiente</a>
                         {% else %}
                             <span class="pagination-link disabled">Siguiente</span>
                         {% endif %}
@@ -105,10 +104,19 @@
 
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    window.location.href = "{{ url_for('training_history.get_training_history', page=pagination.page, search='') }}".replace('search=', 'search=' + encodeURIComponent(this.value));
+                    window.location.href = "{{ url_for('training_history.get_training_history', page=1, training_code=request.args.get('training_code'), all_officials=request.args.get('all_officials', 'false'), search='') }}".replace('search=', 'search=' + encodeURIComponent(this.value));
                 }
             });
         });
     </script>
+    {% if printable %}
+        <script>
+            window.print();
+        </script>
+    {% endif %}
+    <div class="print-only print-header">
+        <h2>Historial de Capacitaciones</h2>
+        <p>Generado por: {{ current_user.username }}</p>
+    </div>
 </body>
 </html>
