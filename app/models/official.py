@@ -7,6 +7,7 @@ class Official(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     date_of_birth = db.Column(db.Date)
+    gender = db.Column(db.String(20), nullable=False)
     country = db.Column(db.String(150), nullable=False)
     address = db.Column(db.String(150), nullable=False)
     phone_number = db.Column(db.String(15), nullable=False)

@@ -1,128 +1,225 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nuevo Funcionario</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
     <!-- Debug: Check if CSS is loaded in browser Network tab -->
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <button class="hamburger" aria-label="Toggle Menu">☰</button>
-        <main class="main-content">
-            <header class="header">
-                <div class="user-profile">
-                    <img src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}" alt="User Profile" class="user-icon">
-                    <div class="user-dropdown">
-                        <p class="user-name">{{ current_user.username }}</p>
-                    </div>
+      <button class="hamburger" aria-label="Toggle Menu">☰</button>
+      <main class="main-content">
+        <header class="header">
+          <div class="user-profile">
+            <img
+              src="{{ current_user.profile_picture if current_user.profile_picture else url_for('static', filename='images/user.png') }}"
+              alt="User Profile"
+              class="user-icon"
+            />
+            <div class="user-dropdown">
+              <p class="user-name">{{ current_user.username }}</p>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <h2 class="page-title">
+            {{ 'Modificar Funcionario' if official else 'Agregar Nuevo
+            Funcionario' }}
+          </h2>
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="message {{ category }} alert">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+          <form
+            method="POST"
+            action="{{ url_for('official.new_or_update_official', id=official.id if official else '') }}"
+            id="officialForm"
+          >
+            <input
+              type="hidden"
+              name="official_id"
+              value="{{ official.id if official else '' }}"
+            />
+            <!-- CSRF Token será obtenido de la cookie por JavaScript -->
+            <input type="hidden" name="csrf_token" id="csrf_token" value="" />
+            <div class="form-sections">
+              <div class="form-section" data-section="1">
+                <h3>Información Personal</h3>
+                <div class="form-group">
+                  <label for="first_name">Nombre:</label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    value="{{ official.first_name if official else '' }}"
+                    required
+                  />
                 </div>
-            </header>
-            <section class="content">
-                <h2 class="page-title">{{ 'Modificar Funcionario' if official else 'Agregar Nuevo Funcionario' }}</h2>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }} alert">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                <form method="POST" action="{{ url_for('official.new_or_update_official', id=official.id if official else '') }}" id="officialForm">
-                    <input type="hidden" name="official_id" value="{{ official.id if official else '' }}">
-                    <!-- CSRF Token será obtenido de la cookie por JavaScript -->
-                    <input type="hidden" name="csrf_token" id="csrf_token" value="">
-                    <div class="form-sections">
-                        <div class="form-section" data-section="1">
-                            <h3>Información Personal</h3>
-                            <div class="form-group">
-                                <label for="first_name">Nombre:</label>
-                                <input type="text" id="first_name" name="first_name" value="{{ official.first_name if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="last_name">Apellido:</label>
-                                <input type="text" id="last_name" name="last_name" value="{{ official.last_name if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="date_of_birth">Fecha de Nacimiento:</label>
-                                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="country">País:</label>
-                                <input type="text" id="country" name="country" value="{{ official.country if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="address">Dirección:</label>
-                                <input type="text" id="address" name="address" value="{{ official.address if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone_number">Teléfono:</label>
-                                <input type="tel" id="phone_number" name="phone_number" value="{{ official.phone_number if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" value="{{ official.email if official else '' }}">
-                            </div>
-                        </div>
-                        <div class="form-section" data-section="2">
-                            <h3>Información Laboral</h3>
-                            <div class="form-group">
-                                <label for="workplace">Lugar de Trabajo:</label>
-                                <input type="text" id="workplace" name="workplace" value="{{ official.workplace if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="level">Nivel:</label>
-                                <input type="text" id="level" name="level" value="{{ official.level if official else '' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="image">Imagen (URL):</label>
-                                <input type="text" id="image" name="image" value="{{ official.image if official else '' }}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="navigation-buttons">
-                        <button type="button" class="card-link" id="prevBtn" style="display: none">Anterior</button>
-                        <button type="button" class="card-link" id="nextBtn">Siguiente</button>
-                        <button type="submit" class="card-link" id="saveBtn" style="display: none">Guardar</button>
-                    </div>
-                </form>
-            </section>
-        </main>
+                <div class="form-group">
+                  <label for="last_name">Apellido:</label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value="{{ official.last_name if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="date_of_birth">Fecha de Nacimiento:</label>
+                  <input
+                    type="date"
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    value="{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else '' }}"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="gender">Género:</label>
+                  <select id="gender" name="gender" required>
+                    <option value="">Seleccione un género</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="country">País:</label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value="{{ official.country if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="address">Dirección:</label>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value="{{ official.address if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="phone_number">Teléfono:</label>
+                  <input
+                    type="tel"
+                    id="phone_number"
+                    name="phone_number"
+                    value="{{ official.phone_number if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email:</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ official.email if official else '' }}"
+                  />
+                </div>
+              </div>
+              <div class="form-section" data-section="2">
+                <h3>Información Laboral</h3>
+                <div class="form-group">
+                  <label for="workplace">Ministerio:</label>
+                  <input
+                    type="text"
+                    id="workplace"
+                    name="workplace"
+                    value="{{ official.workplace if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="level">Nivel:</label>
+                  <input
+                    type="text"
+                    id="level"
+                    name="level"
+                    value="{{ official.level if official else '' }}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="image">Imagen (URL):</label>
+                  <input
+                    type="text"
+                    id="image"
+                    name="image"
+                    value="{{ official.image if official else '' }}"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="navigation-buttons">
+              <button
+                type="button"
+                class="card-link"
+                id="prevBtn"
+                style="display: none"
+              >
+                Anterior
+              </button>
+              <button type="button" class="card-link" id="nextBtn">
+                Siguiente
+              </button>
+              <button
+                type="submit"
+                class="card-link"
+                id="saveBtn"
+                style="display: none"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.form-section');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            let currentSection = 1;
+      document.addEventListener("DOMContentLoaded", function () {
+        const sections = document.querySelectorAll(".form-section");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const saveBtn = document.getElementById("saveBtn");
+        let currentSection = 1;
 
-            function showSection(section) {
-                sections.forEach((s, index) => {
-                    s.style.display = index + 1 === section ? 'block' : 'none';
-                });
-                prevBtn.style.display = section > 1 ? 'inline' : 'none';
-                nextBtn.style.display = section < sections.length ? 'inline' : 'none';
-                saveBtn.style.display = section === sections.length ? 'inline' : 'none';
-            }
+        function showSection(section) {
+          sections.forEach((s, index) => {
+            s.style.display = index + 1 === section ? "block" : "none";
+          });
+          prevBtn.style.display = section > 1 ? "inline" : "none";
+          nextBtn.style.display = section < sections.length ? "inline" : "none";
+          saveBtn.style.display =
+            section === sections.length ? "inline" : "none";
+        }
 
-            prevBtn.addEventListener('click', () => {
-                if (currentSection > 1) {
-                    currentSection--;
-                    showSection(currentSection);
-                }
-            });
-
-            nextBtn.addEventListener('click', () => {
-                if (currentSection < sections.length) {
-                    currentSection++;
-                    showSection(currentSection);
-                }
-            });
-
+        prevBtn.addEventListener("click", () => {
+          if (currentSection > 1) {
+            currentSection--;
             showSection(currentSection);
+          }
         });
+
+        nextBtn.addEventListener("click", () => {
+          if (currentSection < sections.length) {
+            currentSection++;
+            showSection(currentSection);
+          }
+        });
+
+        showSection(currentSection);
+      });
     </script>
-</body>
+  </body>
 </html>

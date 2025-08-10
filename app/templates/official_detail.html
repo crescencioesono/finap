@@ -41,6 +41,9 @@
                             <strong>Fecha de Nacimiento:</strong> <span class="detail-value">{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else 'No especificada' }}</span>
                         </div>
                         <div class="detail-item">
+                            <strong>Género:</strong> <span class="detail-value">{{ official.gender }}</span>
+                        </div>
+                        <div class="detail-item">
                             <strong>País:</strong> <span class="detail-value">{{ official.country }}</span>
                         </div>
                         <div class="detail-item">
@@ -53,7 +56,7 @@
                             <strong>Email:</strong> <span class="detail-value">{{ official.email or 'No especificado' }}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Lugar de Trabajo:</strong> <span class="detail-value">{{ official.workplace }}</span>
+                            <strong>Ministerio:</strong> <span class="detail-value">{{ official.workplace }}</span>
                         </div>
                         <div class="detail-item">
                             <strong>Nivel:</strong> <span class="detail-value">{{ official.level }}</span>

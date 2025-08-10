@@ -5,11 +5,12 @@ from app.models.training_history import TrainingHistory
 
 class OfficialService:
     @staticmethod
-    def create_official(first_name, last_name, date_of_birth, country, address, phone_number, workplace, level, email=None, image=None):
+    def create_official(first_name, last_name, date_of_birth, gender, country, address, phone_number, workplace, level, email=None, image=None):
         new_official = Official(
             first_name=first_name,
             last_name=last_name,
             date_of_birth=date_of_birth,
+            gender=gender,
             country=country,
             address=address,
             phone_number=phone_number,
@@ -32,7 +33,8 @@ class OfficialService:
             query = query.filter(
                 (Official.first_name.ilike(search)) |
                 (Official.last_name.ilike(search)) |
-                (Official.country.ilike(search)) |  # New field
+                (Official.gender.ilike(search)) |  # New field
+                (Official.country.ilike(search)) |
                 (Official.address.ilike(search)) |  # New field
                 (Official.phone_number.ilike(search)) |  # New field
                 (Official.email.ilike(search)) |  # New field
