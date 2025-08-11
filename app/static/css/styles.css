@@ -886,6 +886,15 @@ body::after {
             color: #666;
             margin-bottom: 20px;
         }
+        .detailed-error {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            display: inline-block;
+        }
         .home-button {
             display: inline-block;
             padding: 10px 20px;
