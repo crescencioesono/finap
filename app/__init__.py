@@ -25,6 +25,10 @@ def create_app():
     def handle_unauthorized(error):
         return jsonify({'msg': 'Missing or invalid CSRF token', 'error': str(error)}), 401
 
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return render_template('500.html', current_user=AuthService.get_current_user() if 'AuthService' in globals() else None), 500
+
     @app.route('/get-csrf-token')
     @jwt_required()
     def get_csrf_token_route():
