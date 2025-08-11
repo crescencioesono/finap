@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error del Servidor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div class="error-message">¡Ups! Algo salió mal</div>
+        <div class="error-description">
+            Parece que hemos encontrado un problema en nuestro servidor. No te preocupes, nuestro equipo está trabajando para solucionarlo lo antes posible. Intenta regresar más tarde o contacta al soporte si necesitas ayuda inmediata.
+        </div>
+        {% if current_user %}
+            <div class="error-description">Hola {{ current_user.username }}, sentimos las molestias.</div>
+        {% endif %}
+        <a href="{{ url_for('auth.login') }}" class="home-button">Volver al Inicio</a>
+        <!--<div class="support-info">
+            Si el problema persiste, contáctanos en <a href="mailto:support@example.com">support@example.com</a>.
+        </div>-->
+    </div>
+</body>
+</html>
