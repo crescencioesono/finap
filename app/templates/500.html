@@ -24,6 +24,9 @@
         {% if current_user %}
             <div class="error-description">Hola {{ current_user.username }}, sentimos las molestias.</div>
         {% endif %}
+        {% if error_message and error_message != "Un error interno ha ocurrido en el servidor." %}
+            <div class="detailed-error">Detalles: {{ error_message }}</div>
+        {% endif %}
         <a href="{{ url_for('auth.login') }}" class="home-button">Volver al Inicio</a>
         <!--<div class="support-info">
             Si el problema persiste, contáctanos en <a href="mailto:support@example.com">support@example.com</a>.
