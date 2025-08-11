@@ -862,3 +862,44 @@ body::after {
 .print-button:hover {
     background-color: var(--primary-dark);
 }
+
+.error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .error-icon {
+            font-size: 50px;
+            color: #ff4444;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+        .error-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .home-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+        .support-info {
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+        }
