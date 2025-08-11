@@ -27,8 +27,9 @@ def create_app():
 
     @app.errorhandler(500)
     def internal_server_error(error):
-        return render_template('500.html', current_user=AuthService.get_current_user() if 'AuthService' in globals() else None), 500
-
+        error_message = str(error) if error else "Un error interno ha ocurrido en el servidor."
+        return render_template('500.html', current_user=AuthService.get_current_user() if 'AuthService' in globals() else None, error_message=error_message), 500
+        
     @app.route('/get-csrf-token')
     @jwt_required()
     def get_csrf_token_route():
