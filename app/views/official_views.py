@@ -7,6 +7,7 @@ from app.models import db
 from app.models.batch import Batch
 from app.models.training_history import TrainingHistory
 from app.services.log_service import LogService
+from app.utils.auth_decorators import role_required
 
 official_bp = Blueprint('official', __name__)
 
@@ -86,8 +87,8 @@ def get_official(official_id):
         flash(str(e), 'error')
         return redirect(url_for('official.get_officials'))
 
-@official_bp.route('/<int:official_id>', methods=['DELETE'])
-@jwt_required()
+@official_bp.route('/delete/<int:official_id>', methods=['POST'])
+@role_required("admin")
 def delete_official(official_id):
     result = OfficialService.delete_official(official_id)
     current_user = AuthService.get_current_user()

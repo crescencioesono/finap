@@ -5,7 +5,7 @@ from app.models import db
 class TrainingHistory(db.Model):
     __tablename__ = 'training_history'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    official_id = db.Column(db.Integer, db.ForeignKey('officials.id'), nullable=False)
+    official_id = db.Column(db.Integer, db.ForeignKey('officials.id'), nullable=True)
     batch_id = db.Column(db.Integer, db.ForeignKey('batches.id'), nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     training_city = db.Column(db.String(100), nullable=False)

@@ -21,7 +21,7 @@ class OfficialService:
         )
         db.session.add(new_official)
         db.session.commit()
-        flash('Oficial creado exitosamente', 'success')
+        flash('Funcionario creado exitosamente', 'success')
         return redirect(url_for('official.get_officials'))
 
     @staticmethod
@@ -56,20 +56,20 @@ class OfficialService:
     def update_official(official_id, **kwargs):
         official = Official.query.get(official_id)
         if not official:
-            raise ValueError("Oficial no encontrado")
+            raise ValueError("Funcionario no encontrado")
         for key, value in kwargs.items():
             if hasattr(official, key):
                 setattr(official, key, value)
         db.session.commit()
-        flash('Oficial actualizado exitosamente', 'success')
+        flash('Funcionario actualizado exitosamente', 'success')
         return redirect(url_for('official.get_officials'))
 
     @staticmethod
     def delete_official(official_id):
         official = Official.query.get(official_id)
         if not official:
-            raise ValueError("Oficial no encontrado")
+            raise ValueError("Funcionario no encontrado")
         db.session.delete(official)
         db.session.commit()
-        flash('Oficial eliminado exitosamente', 'success')
+        flash('Funcionario eliminado exitosamente', 'success')
         return redirect(url_for('official.get_officials'))

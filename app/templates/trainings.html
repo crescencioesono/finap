@@ -67,10 +67,19 @@
                     class="action-link"
                     >Modificar</a
                   >
-                  <!--<form action="/training/{{ training.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este oficial?');">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="action-link">Eliminar</button>
-                                    </form>-->
+                  <!--<form
+                    action="/training/{{ training.id }}"
+                    method="POST"
+                    style="display: inline"
+                  >
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <a
+                      href="#"
+                      class="action-link delete-link"
+                      onclick="if (confirm('¿Estás seguro de eliminar este oficial?')) { this.parentElement.submit(); return false; }"
+                      >Eliminar</a
+                    >
+                  </form>-->
                 </td>
               </tr>
               {% endfor %}

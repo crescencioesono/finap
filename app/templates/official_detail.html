@@ -35,7 +35,7 @@
                             <strong>Nombre:</strong> <span class="detail-value">{{ official.first_name }}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Apellido:</strong> <span class="detail-value">{{ official.last_name }}</span>
+                            <strong>Apellidos:</strong> <span class="detail-value">{{ official.last_name }}</span>
                         </div>
                         <div class="detail-item">
                             <strong>Fecha de Nacimiento:</strong> <span class="detail-value">{{ official.date_of_birth.strftime('%Y-%m-%d') if official.date_of_birth else 'No especificada' }}</span>
@@ -53,7 +53,7 @@
                             <strong>Email:</strong> <span class="detail-value">{{ official.email or 'No especificado' }}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Lugar de Trabajo:</strong> <span class="detail-value">{{ official.workplace }}</span>
+                            <strong>Ministerio/Entidad:</strong> <span class="detail-value">{{ official.workplace }}</span>
                         </div>
                         <div class="detail-item">
                             <strong>Nivel:</strong> <span class="detail-value">{{ official.level }}</span>

@@ -13,8 +13,6 @@ class TrainingHistoryService:
         # Apply filters
         if training_code:
             query = query.filter(Batch.code == training_code)
-        elif not all_officials:
-            query = query.filter(Official.id == current_user.id)
 
         # Apply search
         if search_query:

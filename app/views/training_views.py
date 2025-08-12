@@ -4,6 +4,8 @@ from app.services.training_service import TrainingService
 from app.services.auth_service import AuthService
 from flask_jwt_extended import jwt_required
 
+from app.utils.auth_decorators import role_required
+
 training_bp = Blueprint('training', __name__)
 
 @training_bp.route('/', methods=['GET'])
@@ -63,7 +65,7 @@ def update_training(training_id):
         name=data.get('name'),
     )
 
-@training_bp.route('/<int:training_id>', methods=['DELETE'])
-@jwt_required()
+@training_bp.route('/<int:training_id>', methods=['POST'])
+@role_required("admin")
 def delete_training(training_id):
     return TrainingService.delete_training(training_id)

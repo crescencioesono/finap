@@ -6,6 +6,7 @@ from app.services.auth_service import AuthService
 from app.services.training_history_service import TrainingHistoryService
 from app.services.log_service import LogService
 from app.models import db
+from app.utils.auth_decorators import role_required
 
 training_history_bp = Blueprint('training_history', __name__)
 
@@ -63,7 +64,7 @@ def update_batch_tracking(history_id, tracking_id):
     return redirect(url_for('official.get_official', official_id=official_id))
 
 @training_history_bp.route('/print', methods=['GET'])
-@jwt_required()
+@role_required("admin")
 def print_training_history():
     search_query = request.args.get('search', None, type=str)
     training_code = request.args.get('training_code')

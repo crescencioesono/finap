@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from flask_jwt_extended import JWTManager, jwt_required
+from app.services.auth_service import AuthService
 from app.views import auth_views, user_views, official_views, training_views, batch_views, training_history_views, log_views
 from app.models import db
 from werkzeug.security import generate_password_hash

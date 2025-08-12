@@ -4,11 +4,12 @@ from werkzeug.security import generate_password_hash
 from app.services.user_service import UserService
 from app.services.role_service import RoleService
 from app.services.auth_service import AuthService
+from app.utils.auth_decorators import role_required
 
 user_bp = Blueprint('user', __name__)
 
 @user_bp.route('/', methods=['GET'])
-@jwt_required()
+@role_required("admin")
 def get_users():
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', None, type=str)
@@ -16,7 +17,7 @@ def get_users():
     return UserService.get_all_users(current_user=current_user, page=page, search_query=search_query)
 
 @user_bp.route('/new', methods=['GET', 'POST'])
-@jwt_required()
+@role_required("admin")
 def new_or_update_user():
     user_id = request.args.get('id')
     if request.method == 'POST':
@@ -48,7 +49,7 @@ def new_or_update_user():
         return render_template('new_user.html', user=user, roles=roles, current_user=current_user, section=1)
 
 @user_bp.route('/<int:user_id>', methods=['GET'])
-@jwt_required()
+@role_required("admin")
 def get_user(user_id):
     try:
         user = UserService.get_user_by_id(user_id)
@@ -59,7 +60,7 @@ def get_user(user_id):
         return redirect(url_for('user.get_users'))
 
 @user_bp.route('/<int:user_id>', methods=['PUT'])
-@jwt_required()
+@role_required("admin")
 def update_user(user_id):
     data = request.form
     return UserService.update_user(
@@ -67,7 +68,7 @@ def update_user(user_id):
         name=data.get('name'),
     )
 
-@user_bp.route('/<int:user_id>', methods=['DELETE'])
-@jwt_required()
+@user_bp.route('/<int:user_id>', methods=['POST'])
+@role_required("admin")
 def delete_user(user_id):
     return UserService.delete_user(user_id)
