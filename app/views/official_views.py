@@ -135,7 +135,6 @@ def assign_course(official_id):
                 batch = Batch.query.get(data.get('batch_id'))
                 if batch and batch.trainings:
                     for training in batch.trainings:
-                        print(training)
                         batch_tracking = BatchTracking(
                             history_id=new_training.id,
                             training_id=training.id,
