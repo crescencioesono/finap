@@ -5,7 +5,7 @@ from app.models.training_history import TrainingHistory
 
 class OfficialService:
     @staticmethod
-    def create_official(first_name, last_name, date_of_birth=None, gender, country, address, phone_number, workplace, level, email=None, image=None):
+    def create_official(first_name, last_name, gender, country, address, phone_number, workplace, level, date_of_birth=None, email=None, image=None):
         new_official = Official(
             first_name=first_name,
             last_name=last_name,
