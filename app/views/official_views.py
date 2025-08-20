@@ -28,12 +28,16 @@ def new_or_update_official():
     if request.method == 'POST':
         data = request.form
         official_id = data.get('official_id')
+        # Validate and transform date_of_birth
+        date_of_birth = data.get('date_of_birth')
+        date_of_birth = None if date_of_birth == '' else date_of_birth
+
         if official_id:
             result = OfficialService.update_official(
                 official_id=official_id,
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
-                date_of_birth=data.get('date_of_birth'),
+                date_of_birth=date_of_birth,
                 gender=data.get('gender'),
                 country=data.get('country'),
                 address=data.get('address'),
@@ -50,7 +54,7 @@ def new_or_update_official():
             result = OfficialService.create_official(
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
-                date_of_birth=data.get('date_of_birth'),
+                date_of_birth=date_of_birth,
                 gender=data.get('gender'),
                 country=data.get('country'),
                 address=data.get('address'),
