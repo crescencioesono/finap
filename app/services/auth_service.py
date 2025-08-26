@@ -20,7 +20,7 @@ class AuthService:
             return render_template('login.html'), 401
 
         try:
-            access_token = create_access_token(identity=user.username, expires_delta=timedelta(hours=1))
+            access_token = create_access_token(identity=user.username, expires_delta=timedelta(hours=10))
             refresh_token = create_refresh_token(identity=user.username)
         except Exception as e:
             flash('Error al generar el token de autenticación', 'error')
