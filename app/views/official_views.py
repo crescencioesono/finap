@@ -27,42 +27,67 @@ def new_or_update_official():
     official_id = request.args.get('id')
     if request.method == 'POST':
         data = request.form
-        official_id = data.get('official_id')
+        # Trim whitespace from text fields
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+        address = data.get('address', '').strip()
+        phone_number = data.get('phone_number', '').strip()
+        email = data.get('email', '').strip()
+        workplace = data.get('workplace', '').strip()
+        level = data.get('level', '').strip()
         # Validate and transform date_of_birth
         date_of_birth = data.get('date_of_birth')
         date_of_birth = None if date_of_birth == '' else date_of_birth
 
+        # Validate required fields
+        required_fields = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'gender': data.get('gender', '').strip(),
+            'country': data.get('country', '').strip()
+        }
+        for field_name, value in required_fields.items():
+            if not value:
+                flash(f'El campo {field_name} es obligatorio.', 'error')
+                return render_template('new_official.html', official={'id': official_id, 'first_name': first_name, 'last_name': last_name, 'date_of_birth': date_of_birth, 'gender': data.get('gender'), 'country': data.get('country'), 'address': address, 'phone_number': phone_number, 'email': email, 'workplace': workplace, 'level': level, 'image': data.get('image')}, current_user=AuthService.get_current_user(), section=1)
+
+        # Check for existing official with the same name and last name
+        existing_official = OfficialService.get_official_by_name_and_lastname(first_name, last_name)
+        if existing_official and (not official_id or existing_official.id != int(official_id)):
+            flash(f'{first_name + " " + last_name} ya exite.', 'warning')
+            return redirect(url_for('official.get_officials'))
+
         if official_id:
             result = OfficialService.update_official(
                 official_id=official_id,
-                first_name=data.get('first_name'),
-                last_name=data.get('last_name'),
+                first_name=first_name,
+                last_name=last_name,
                 date_of_birth=date_of_birth,
-                gender=data.get('gender'),
-                country=data.get('country'),
-                address=data.get('address'),
-                phone_number=data.get('phone_number'),
-                email=data.get('email'),
-                workplace=data.get('workplace'),
-                level=data.get('level'),
-                image=data.get('image')
+                gender=data.get('gender', '').strip(),
+                country=data.get('country', '').strip(),
+                address=address,
+                phone_number=phone_number,
+                email=email,
+                workplace=workplace,
+                level=level,
+                image=data.get('image', '').strip()
             )
             current_user = AuthService.get_current_user()
             LogService.create_log(f"Actualizó el funcionario {official_id} por el usuario {current_user.id}", f"Datos: {data}")
             return result
         else:
             result = OfficialService.create_official(
-                first_name=data.get('first_name'),
-                last_name=data.get('last_name'),
+                first_name=first_name,
+                last_name=last_name,
                 date_of_birth=date_of_birth,
-                gender=data.get('gender'),
-                country=data.get('country'),
-                address=data.get('address'),
-                phone_number=data.get('phone_number'),
-                email=data.get('email'),
-                workplace=data.get('workplace'),
-                level=data.get('level'),
-                image=data.get('image')
+                gender=data.get('gender', '').strip(),
+                country=data.get('country', '').strip(),
+                address=address,
+                phone_number=phone_number,
+                email=email,
+                workplace=workplace,
+                level=level,
+                image=data.get('image', '').strip()
             )
             current_user = AuthService.get_current_user()
             LogService.create_log(f"Creó un funcionario por el usuario {current_user.id}", f"Datos: {data}")

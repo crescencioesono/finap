@@ -51,7 +51,11 @@ class OfficialService:
             db.joinedload(Official.training_history).joinedload(TrainingHistory.batch_tracking)
         ).get_or_404(official_id)
         return official
-
+    
+    @staticmethod
+    def get_official_by_name_and_lastname(first_name, last_name):
+        return Official.query.filter_by(first_name=first_name, last_name=last_name).first()
+    
     @staticmethod
     def update_official(official_id, **kwargs):
         official = Official.query.get(official_id)
