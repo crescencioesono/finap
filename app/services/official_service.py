@@ -26,7 +26,7 @@ class OfficialService:
 
     @staticmethod
     def get_all_officials(current_user=None, page=1, search_query=None):
-        per_page = 10
+        per_page = 100000
         query = Official.query
         if search_query:
             search = f"%{search_query}%"
